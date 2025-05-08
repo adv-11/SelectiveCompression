@@ -1,4 +1,5 @@
 
+import time
 
 class MemorySegment:
     def __init__(self, content, id, creation_time, importance=0.5, compression_level=0):

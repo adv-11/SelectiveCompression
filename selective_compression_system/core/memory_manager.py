@@ -1,3 +1,7 @@
+from core.memory import MemorySegment, MemoryTier
+import time
+import uuid
+
 class MemoryManager:
     def __init__(self, hot_size, warm_size, cold_size, compressor, relevance_evaluator):
         self.hot_memory = MemoryTier("hot", hot_size)

@@ -1,4 +1,5 @@
-
+import time
+from core.memory import MemorySegment
 
 class RetrievalEngine:
     def __init__(self, memory_manager, relevance_evaluator, llm_interface):

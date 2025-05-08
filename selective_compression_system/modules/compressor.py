@@ -1,3 +1,6 @@
+from core.memory import MemorySegment
+import time
+
 class CompressorModule:
     def __init__(self, llm_interface, entity_extractor):
         self.llm_interface = llm_interface
