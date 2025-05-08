@@ -20,7 +20,7 @@ c. Relevance Evaluator: Determines importance and relevance of information
 d. Retrieval Engine: Identifies when compressed information needs expansion  
 e. Integration Layer: Interfaces with the underlying LLM  
 
-![High-Level Architecture](high_level_architecture.png)
+![High-Level Architecture](1diagrams/high_level_architecture.png)
 
 ##### 2.2 Memory Tiers
 
@@ -539,5 +539,5 @@ SelectiveCompressionSystem
 
 #### 5.2 Data Flow
 
-![Data Flow](dataflow.png)
+![Data Flow](1diagrams/dataflow.png)
 
