@@ -514,29 +514,29 @@ function GENERATE_STRUCTURED_EXPANSION_PROMPT(compressed_content, metadata):
 
 
 ### 5. Implementation Architecture in Python
+
 #### 5.1 Class Structure
 
-SelectiveCompressionSystem
-├── MemoryManager
-│   ├── HotMemory
-│   ├── WarmMemory
-│   └── ColdMemory
-├── CompressorModule
-│   ├── LightCompressor
-│   └── HeavyCompressor
-├── RelevanceEvaluator
-│   ├── RecencyScorer
-│   ├── AccessScorer
-│   ├── SemanticScorer
-│   └── EntityScorer
-├── RetrievalEngine
-│   ├── RelevanceDetector
-│   └── DecompressionHandler
-└── IntegrationLayer
-    ├── ContextBuilder
-    ├── LLMInterface
-    └── ResponseProcessor
+selective_compression_system/
+├── __init__.py
+├── core/
+│   ├── __init__.py
+│   ├── memory.py             # Memory segment and tier classes
+│   ├── memory_manager.py     # Memory management functionality
+│   └── system.py             # Main system class
+├── modules/
+│   ├── __init__.py
+│   ├── compressor.py         # Compression functionality
+│   ├── entity_extractor.py   # Entity extraction
+│   ├── relevance.py          # Relevance evaluation
+│   └── retrieval.py          # Retrieval engine
+└── interface/
+    ├── __init__.py
+    ├── llm_interface.py      # LLM integration
+    └── integration.py        # Integration layer
 
+
+    
 #### 5.2 Data Flow
 
 ![Data Flow](1diagrams/dataflow.png)
