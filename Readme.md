@@ -360,3 +360,184 @@ function PROCESS_USER_INPUT(user_input):
     MEMORY_MANAGER.manage_memory_tiers()
     
     return llm_response
+```
+
+
+
+#### 4. Implementation Details
+
+##### 4.1 Segmentation Strategy
+
+Effective segmentation is crucial for the Selective Compression system. Rather than arbitrary token-based divisions, we employ semantic segmentation.
+
+**Segmentation Approaches:**
+- Topic-Based Segmentation: Detect topic changes in the conversation
+- Temporal Segmentation: Create boundaries based on time (e.g., conversation turns)
+- Entity-Based Segmentation: Group content around key entities
+
+**Segmentation Algorithm:**
+```python
+function SEGMENT_CONTENT(content):
+    # 1. Perform initial splitting by conversation turns
+    turn_segments = SPLIT_BY_TURNS(content)
+    
+    # 2. Further segment long turns by topic shifts
+    final_segments = []
+    for segment in turn_segments:
+        if LEN(segment) > MAX_SEGMENT_LENGTH:
+            # Detect topic shifts
+            topic_segments = DETECT_TOPIC_SHIFTS(segment)
+            final_segments.extend(topic_segments)
+        else:
+            final_segments.append(segment)
+    
+    # 3. Create MemorySegment objects for each segment
+    memory_segments = []
+    for segment in final_segments:
+        memory_segment = CREATE_MEMORY_SEGMENT(segment)
+        memory_segments.append(memory_segment)
+    
+    return memory_segments
+```
+
+##### 4.2 Compression Techniques
+
+The compression module utilizes several techniques depending on the desired compression level.
+
+**Light Compression Techniques:**
+- Extractive Summarization: Identify and retain key sentences
+- Entity and Relationship Preservation: Ensure all key entities and their relationships remain
+- Redundancy Elimination: Remove repeated information while preserving nuance
+
+**Heavy Compression Techniques:**
+- Abstractive Summarization: Generate concise summaries capturing core meaning
+- Structured Knowledge Extraction: Convert narrative text to structured facts
+- Hierarchical Importance Filtering: Retain only highest-importance elements
+
+**Implementation Approaches:**
+For both compression levels, we can use:
+- LLM-based compression: Use the same or a smaller LLM to perform compression
+- Fine-tuned specialized compressors: Train dedicated models for compression tasks
+- Hybrid approaches: Combine rule-based techniques with machine learning
+
+##### 4.3 Relevance Evaluation Metrics
+
+Detailed explanation of how relevance scores are calculated:
+
+**Recency Score:**
+```python
+function CALCULATE_RECENCY_SCORE(creation_timestamp):
+    age = CURRENT_TIME() - creation_timestamp
+    return exp(-RECENCY_DECAY_FACTOR * age)
+```
+
+**Access Score:**
+```python
+function CALCULATE_ACCESS_SCORE(access_count, last_accessed_timestamp):
+    recency_factor = exp(-ACCESS_RECENCY_DECAY_FACTOR * (CURRENT_TIME() - last_accessed_timestamp))
+    frequency_factor = 1 - exp(-ACCESS_COUNT_FACTOR * access_count)
+    return ALPHA * recency_factor + (1 - ALPHA) * frequency_factor
+```
+
+**Semantic Similarity:**
+```python
+function CALCULATE_SEMANTIC_SIMILARITY(segment_content, current_context):
+    # Extract embeddings
+    segment_embedding = EMBEDDING_MODEL.embed(segment_content)
+    context_embedding = EMBEDDING_MODEL.embed(current_context)
+    
+    # Calculate cosine similarity
+    return COSINE_SIMILARITY(segment_embedding, context_embedding)
+```
+
+**Entity Importance:**
+```python
+function CALCULATE_ENTITY_IMPORTANCE(entities, current_context):
+    # Extract entities from current context
+    context_entities = EXTRACT_ENTITIES(current_context)
+    
+    # Calculate overlap
+    overlap_count = len(set(entities).intersection(set(context_entities)))
+    
+    # Weight by global entity importance
+    weighted_importance = 0
+    for entity in entities:
+        if entity in context_entities:
+            weighted_importance += GLOBAL_ENTITY_IMPORTANCE[entity]
+    
+    return BETA * (overlap_count / max(1, len(entities))) + (1 - BETA) * weighted_importance
+```
+
+##### 4.4 Decompression Strategies
+
+Decompression aims to recreate detailed information from compressed representations.
+
+**Light Decompression:**
+Using prompts that instruct the LLM to expand the summary while maintaining factual consistency:
+```python
+function GENERATE_EXPANSION_PROMPT(compressed_content, metadata):
+    prompt = f"""
+    Below is a compressed summary of a conversation segment. 
+    Please expand this summary into a detailed passage that preserves all the 
+    information while adding natural language flow and detail.
+    
+    Important entities to include: {metadata['retained_entities']}
+    
+    Compressed content:
+    {compressed_content}
+    
+    Expanded content:
+    """
+    return prompt
+```
+
+**Heavy Decompression:**
+Using structured prompts with entity information to guide detailed expansion:
+```python
+function GENERATE_STRUCTURED_EXPANSION_PROMPT(compressed_content, metadata):
+    prompt = f"""
+    Below is a heavily compressed representation of conversation information.
+    Please expand this into a natural, detailed passage that includes all the
+    entities and relationships mentioned.
+    
+    The expansion should be coherent and read naturally while preserving all facts.
+    
+    Original entities: {metadata['original_entities']}
+    
+    Compressed representation:
+    {compressed_content}
+    
+    Expanded content:
+    """
+    return prompt
+```
+
+
+### 5. Implementation Architecture in Python
+#### 5.1 Class Structure
+
+SelectiveCompressionSystem
+├── MemoryManager
+│   ├── HotMemory
+│   ├── WarmMemory
+│   └── ColdMemory
+├── CompressorModule
+│   ├── LightCompressor
+│   └── HeavyCompressor
+├── RelevanceEvaluator
+│   ├── RecencyScorer
+│   ├── AccessScorer
+│   ├── SemanticScorer
+│   └── EntityScorer
+├── RetrievalEngine
+│   ├── RelevanceDetector
+│   └── DecompressionHandler
+└── IntegrationLayer
+    ├── ContextBuilder
+    ├── LLMInterface
+    └── ResponseProcessor
+
+#### 5.2 Data Flow
+
+![Data Flow](dataflow.png)
+
