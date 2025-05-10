@@ -9,7 +9,7 @@ from modules.relevance import RelevanceEvaluator
 from core.memory_manager import MemoryManager
 from modules.retriever import RetrievalEngine
 from interface.integration import IntegrationLayer
-from core.memory import MemorySegment, MemoryTier
+from core.memory import MemorySegment
 
 
 class SelectiveCompressionSystem:
@@ -78,7 +78,7 @@ class SelectiveCompressionSystem:
             return self.integration_layer.process_user_input(user_input)
         except Exception as e:
             logging.error(f"Error in process_input: {str(e)}")
-            return f"I encountered an error processing your input. Please try again."
+            return f"I encountered an error processing your input: {str(e)}"
     
     def get_memory_stats(self) -> Dict[str, Dict[str, Any]]:
         """Get statistics about memory usage.
@@ -152,3 +152,55 @@ class SelectiveCompressionSystem:
         except Exception as e:
             logging.error(f"Error getting hot memory contents: {str(e)}")
             return f"Error: {str(e)}"
+            
+    def get_memory_segment(self, segment_id: str, tier: str = "all") -> Optional[MemorySegment]:
+        """Get a specific memory segment by ID.
+        
+        Args:
+            segment_id (str): ID of the segment to retrieve
+            tier (str): Memory tier to search ("hot", "warm", "cold", or "all")
+            
+        Returns:
+            Optional[MemorySegment]: The memory segment if found, None otherwise
+        """
+        try:
+            if tier in ["hot", "all"]:
+                segment = self.memory_manager.hot_memory.get_segment(segment_id)
+                if segment:
+                    return segment
+            
+            if tier in ["warm", "all"]:
+                segment = self.memory_manager.warm_memory.get_segment(segment_id)
+                if segment:
+                    return segment
+            
+            if tier in ["cold", "all"]:
+                segment = self.memory_manager.cold_memory.get_segment(segment_id)
+                if segment:
+                    return segment
+                    
+            return None
+        except Exception as e:
+            logging.error(f"Error getting memory segment {segment_id}: {str(e)}")
+            return None
+            
+    def force_memory_management(self) -> Dict[str, Any]:
+        """Force memory management operations to run.
+        
+        Returns:
+            Dict: Information about the operations performed
+        """
+        try:
+            stats_before = self.get_memory_stats()
+            
+            self.memory_manager.manage_memory_tiers()
+            
+            stats_after = self.get_memory_stats()
+            
+            return {
+                "before": stats_before,
+                "after": stats_after
+            }
+        except Exception as e:
+            logging.error(f"Error during forced memory management: {str(e)}")
+            return {"error": str(e)}
