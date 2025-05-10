@@ -1,0 +1,735 @@
+2025-05-10 10:52:29,678 - root - INFO - Testing memory tiers...
+2025-05-10 10:52:29,678 - root - INFO - Memory tier tests passed!
+2025-05-10 10:52:29,678 - root - INFO - Testing entity extraction...
+2025-05-10 10:52:29,678 - root - WARNING - Could not load spaCy model: [E050] Can't find model 'en_core_web_sm'. It doesn't seem to be a Python package or a valid path to a data directory.
+2025-05-10 10:52:29,678 - root - INFO - Extracted entities: ['john', 'smith', 'met', 'sarah', 'johnson', 'google', 'headquarters', 'mountain', 'view', 'discussed', 'new', 'ai', 'project', 'its', 'impact']
+2025-05-10 10:52:29,678 - root - INFO - Extracted relationships: [('john', 'related-to', 'smith'), ('john', 'related-to', 'met'), ('john', 'related-to', 'sarah'), ('john', 'related-to', 'johnson'), ('john', 'related-to', 'google'), ('john', 'related-to', 'headquarters'), ('john', 'related-to', 'mountain'), ('john', 'related-to', 'view'), ('john', 'related-to', 'ai'), ('smith', 'related-to', 'met')]
+2025-05-10 10:52:29,678 - root - INFO - Entity extraction tests passed!
+2025-05-10 10:52:29,678 - root - INFO - Testing compression and decompression...
+2025-05-10 10:52:29,678 - root - INFO - Initialized MockLLMInterface with model gpt-4o-mini
+2025-05-10 10:52:29,678 - root - WARNING - Could not load spaCy model: [E050] Can't find model 'en_core_web_sm'. It doesn't seem to be a Python package or a valid path to a data directory.
+2025-05-10 10:52:29,678 - root - INFO - Mock generate called with prompt length: 704
+2025-05-10 10:52:29,678 - root - INFO - Light compression result: COMPRESSED: oncerns about privacy, security, and job displacement.
+        
+        Compressed version:
+        ...
+2025-05-10 10:52:29,678 - root - INFO - Mock generate called with prompt length: 1078
+2025-05-10 10:52:29,678 - root - INFO - Heavy compression result: COMPRESSED: privacy, security, and job displacement.
+        
+        Highly compressed representation:
+        ...
+2025-05-10 10:52:29,678 - root - INFO - Mock generate called with prompt length: 383
+2025-05-10 10:52:29,678 - root - INFO - Mock generate called with prompt length: 584
+2025-05-10 10:52:29,678 - root - INFO - Light decompression result: COMPRESSED: ment.
+        
+        Compressed version:
+        ...
+        
+        Detailed expansion:
+        ...
+2025-05-10 10:52:29,678 - root - INFO - Heavy decompression result: COMPRESSED: 
+        Highly compressed representation:
+        ...
+        
+        Detailed expansion:
+        ...
+2025-05-10 10:52:29,678 - root - INFO - Compression and decompression tests passed!
+2025-05-10 10:52:29,678 - root - INFO - Testing memory management...
+2025-05-10 10:52:29,678 - root - INFO - Initialized MockLLMInterface with model gpt-4o-mini
+2025-05-10 10:52:29,686 - root - INFO - Initializing SelectiveCompressionSystem with model mock-model
+2025-05-10 10:52:29,686 - root - WARNING - No OpenAI API key provided. Set OPENAI_API_KEY environment variable.
+2025-05-10 10:52:29,686 - root - INFO - Initialized LLM interface
+2025-05-10 10:52:29,686 - root - WARNING - Could not load spaCy model: [E050] Can't find model 'en_core_web_sm'. It doesn't seem to be a Python package or a valid path to a data directory.
+2025-05-10 10:52:29,686 - root - INFO - Initialized entity extractor
+2025-05-10 10:52:29,686 - root - INFO - Initialized compressor module
+2025-05-10 10:52:29,686 - root - INFO - Initialized relevance evaluator
+2025-05-10 10:52:29,686 - root - INFO - Initialized memory manager
+2025-05-10 10:52:29,686 - root - INFO - Initialized retrieval engine
+2025-05-10 10:52:29,686 - root - INFO - Integration layer initialized
+2025-05-10 10:52:29,686 - root - INFO - Initialized integration layer
+2025-05-10 10:52:29,686 - root - INFO - Selective Compression System initialization complete
+2025-05-10 10:52:29,686 - root - INFO - Memory stats after 0 additions: {'hot_memory': {'size': 41, 'capacity': 200, 'segment_count': 1, 'utilization': '20.5%'}, 'warm_memory': {'size': 0, 'capacity': 400, 'segment_count': 0, 'utilization': '0.0%'}, 'cold_memory': {'size': 0, 'capacity': 800, 'segment_count': 0, 'utilization': '0.0%'}, 'total': {'size': 41, 'capacity': 1400, 'segment_count': 1}}
+2025-05-10 10:52:29,686 - root - INFO - Memory stats after 5 additions: {'hot_memory': {'size': 246, 'capacity': 200, 'segment_count': 6, 'utilization': '123.0%'}, 'warm_memory': {'size': 0, 'capacity': 400, 'segment_count': 0, 'utilization': '0.0%'}, 'cold_memory': {'size': 0, 'capacity': 800, 'segment_count': 0, 'utilization': '0.0%'}, 'total': {'size': 246, 'capacity': 1400, 'segment_count': 6}}
+2025-05-10 10:52:29,686 - root - INFO - Memory stats after 10 additions: {'hot_memory': {'size': 451, 'capacity': 200, 'segment_count': 11, 'utilization': '225.5%'}, 'warm_memory': {'size': 0, 'capacity': 400, 'segment_count': 0, 'utilization': '0.0%'}, 'cold_memory': {'size': 0, 'capacity': 800, 'segment_count': 0, 'utilization': '0.0%'}, 'total': {'size': 451, 'capacity': 1400, 'segment_count': 11}}
+2025-05-10 10:52:29,686 - root - INFO - Memory stats after 15 additions: {'hot_memory': {'size': 656, 'capacity': 200, 'segment_count': 16, 'utilization': '328.0%'}, 'warm_memory': {'size': 0, 'capacity': 400, 'segment_count': 0, 'utilization': '0.0%'}, 'cold_memory': {'size': 0, 'capacity': 800, 'segment_count': 0, 'utilization': '0.0%'}, 'total': {'size': 656, 'capacity': 1400, 'segment_count': 16}}
+2025-05-10 10:52:29,895 - root - ERROR - Error in text embedding: 
+
+You tried to access openai.Embedding, but this is no longer supported in openai>=1.0.0 - see the README at https://github.com/openai/openai-python for the API.
+
+You can run `openai migrate` to automatically upgrade your codebase to use the 1.0.0 interface. 
+
+Alternatively, you can pin your installation to the old version, e.g. `pip install openai==0.28`
+
+A detailed migration guide is available here: https://github.com/openai/openai-python/discussions/742
+
+2025-05-10 10:52:30,109 - root - ERROR - Error in text embedding: 
+
+You tried to access openai.Embedding, but this is no longer supported in openai>=1.0.0 - see the README at https://github.com/openai/openai-python for the API.
+
+You can run `openai migrate` to automatically upgrade your codebase to use the 1.0.0 interface. 
+
+Alternatively, you can pin your installation to the old version, e.g. `pip install openai==0.28`
+
+A detailed migration guide is available here: https://github.com/openai/openai-python/discussions/742
+
+2025-05-10 10:52:30,312 - root - ERROR - Error in text embedding: 
+
+You tried to access openai.Embedding, but this is no longer supported in openai>=1.0.0 - see the README at https://github.com/openai/openai-python for the API.
+
+You can run `openai migrate` to automatically upgrade your codebase to use the 1.0.0 interface. 
+
+Alternatively, you can pin your installation to the old version, e.g. `pip install openai==0.28`
+
+A detailed migration guide is available here: https://github.com/openai/openai-python/discussions/742
+
+2025-05-10 10:52:30,515 - root - ERROR - Error in text embedding: 
+
+You tried to access openai.Embedding, but this is no longer supported in openai>=1.0.0 - see the README at https://github.com/openai/openai-python for the API.
+
+You can run `openai migrate` to automatically upgrade your codebase to use the 1.0.0 interface. 
+
+Alternatively, you can pin your installation to the old version, e.g. `pip install openai==0.28`
+
+A detailed migration guide is available here: https://github.com/openai/openai-python/discussions/742
+
+2025-05-10 10:52:30,726 - root - ERROR - Error in text embedding: 
+
+You tried to access openai.Embedding, but this is no longer supported in openai>=1.0.0 - see the README at https://github.com/openai/openai-python for the API.
+
+You can run `openai migrate` to automatically upgrade your codebase to use the 1.0.0 interface. 
+
+Alternatively, you can pin your installation to the old version, e.g. `pip install openai==0.28`
+
+A detailed migration guide is available here: https://github.com/openai/openai-python/discussions/742
+
+2025-05-10 10:52:30,927 - root - ERROR - Error in text embedding: 
+
+You tried to access openai.Embedding, but this is no longer supported in openai>=1.0.0 - see the README at https://github.com/openai/openai-python for the API.
+
+You can run `openai migrate` to automatically upgrade your codebase to use the 1.0.0 interface. 
+
+Alternatively, you can pin your installation to the old version, e.g. `pip install openai==0.28`
+
+A detailed migration guide is available here: https://github.com/openai/openai-python/discussions/742
+
+2025-05-10 10:52:31,131 - root - ERROR - Error in text embedding: 
+
+You tried to access openai.Embedding, but this is no longer supported in openai>=1.0.0 - see the README at https://github.com/openai/openai-python for the API.
+
+You can run `openai migrate` to automatically upgrade your codebase to use the 1.0.0 interface. 
+
+Alternatively, you can pin your installation to the old version, e.g. `pip install openai==0.28`
+
+A detailed migration guide is available here: https://github.com/openai/openai-python/discussions/742
+
+2025-05-10 10:52:31,344 - root - ERROR - Error in text embedding: 
+
+You tried to access openai.Embedding, but this is no longer supported in openai>=1.0.0 - see the README at https://github.com/openai/openai-python for the API.
+
+You can run `openai migrate` to automatically upgrade your codebase to use the 1.0.0 interface. 
+
+Alternatively, you can pin your installation to the old version, e.g. `pip install openai==0.28`
+
+A detailed migration guide is available here: https://github.com/openai/openai-python/discussions/742
+
+2025-05-10 10:52:31,552 - root - ERROR - Error in text embedding: 
+
+You tried to access openai.Embedding, but this is no longer supported in openai>=1.0.0 - see the README at https://github.com/openai/openai-python for the API.
+
+You can run `openai migrate` to automatically upgrade your codebase to use the 1.0.0 interface. 
+
+Alternatively, you can pin your installation to the old version, e.g. `pip install openai==0.28`
+
+A detailed migration guide is available here: https://github.com/openai/openai-python/discussions/742
+
+2025-05-10 10:52:31,755 - root - ERROR - Error in text embedding: 
+
+You tried to access openai.Embedding, but this is no longer supported in openai>=1.0.0 - see the README at https://github.com/openai/openai-python for the API.
+
+You can run `openai migrate` to automatically upgrade your codebase to use the 1.0.0 interface. 
+
+Alternatively, you can pin your installation to the old version, e.g. `pip install openai==0.28`
+
+A detailed migration guide is available here: https://github.com/openai/openai-python/discussions/742
+
+2025-05-10 10:52:31,962 - root - ERROR - Error in text embedding: 
+
+You tried to access openai.Embedding, but this is no longer supported in openai>=1.0.0 - see the README at https://github.com/openai/openai-python for the API.
+
+You can run `openai migrate` to automatically upgrade your codebase to use the 1.0.0 interface. 
+
+Alternatively, you can pin your installation to the old version, e.g. `pip install openai==0.28`
+
+A detailed migration guide is available here: https://github.com/openai/openai-python/discussions/742
+
+2025-05-10 10:52:32,175 - root - ERROR - Error in text embedding: 
+
+You tried to access openai.Embedding, but this is no longer supported in openai>=1.0.0 - see the README at https://github.com/openai/openai-python for the API.
+
+You can run `openai migrate` to automatically upgrade your codebase to use the 1.0.0 interface. 
+
+Alternatively, you can pin your installation to the old version, e.g. `pip install openai==0.28`
+
+A detailed migration guide is available here: https://github.com/openai/openai-python/discussions/742
+
+2025-05-10 10:52:32,386 - root - ERROR - Error in text embedding: 
+
+You tried to access openai.Embedding, but this is no longer supported in openai>=1.0.0 - see the README at https://github.com/openai/openai-python for the API.
+
+You can run `openai migrate` to automatically upgrade your codebase to use the 1.0.0 interface. 
+
+Alternatively, you can pin your installation to the old version, e.g. `pip install openai==0.28`
+
+A detailed migration guide is available here: https://github.com/openai/openai-python/discussions/742
+
+2025-05-10 10:52:32,591 - root - ERROR - Error in text embedding: 
+
+You tried to access openai.Embedding, but this is no longer supported in openai>=1.0.0 - see the README at https://github.com/openai/openai-python for the API.
+
+You can run `openai migrate` to automatically upgrade your codebase to use the 1.0.0 interface. 
+
+Alternatively, you can pin your installation to the old version, e.g. `pip install openai==0.28`
+
+A detailed migration guide is available here: https://github.com/openai/openai-python/discussions/742
+
+2025-05-10 10:52:32,795 - root - ERROR - Error in text embedding: 
+
+You tried to access openai.Embedding, but this is no longer supported in openai>=1.0.0 - see the README at https://github.com/openai/openai-python for the API.
+
+You can run `openai migrate` to automatically upgrade your codebase to use the 1.0.0 interface. 
+
+Alternatively, you can pin your installation to the old version, e.g. `pip install openai==0.28`
+
+A detailed migration guide is available here: https://github.com/openai/openai-python/discussions/742
+
+2025-05-10 10:52:33,016 - root - ERROR - Error in text embedding: 
+
+You tried to access openai.Embedding, but this is no longer supported in openai>=1.0.0 - see the README at https://github.com/openai/openai-python for the API.
+
+You can run `openai migrate` to automatically upgrade your codebase to use the 1.0.0 interface. 
+
+Alternatively, you can pin your installation to the old version, e.g. `pip install openai==0.28`
+
+A detailed migration guide is available here: https://github.com/openai/openai-python/discussions/742
+
+2025-05-10 10:52:33,225 - root - ERROR - Error in text embedding: 
+
+You tried to access openai.Embedding, but this is no longer supported in openai>=1.0.0 - see the README at https://github.com/openai/openai-python for the API.
+
+You can run `openai migrate` to automatically upgrade your codebase to use the 1.0.0 interface. 
+
+Alternatively, you can pin your installation to the old version, e.g. `pip install openai==0.28`
+
+A detailed migration guide is available here: https://github.com/openai/openai-python/discussions/742
+
+2025-05-10 10:52:33,435 - root - ERROR - Error in text embedding: 
+
+You tried to access openai.Embedding, but this is no longer supported in openai>=1.0.0 - see the README at https://github.com/openai/openai-python for the API.
+
+You can run `openai migrate` to automatically upgrade your codebase to use the 1.0.0 interface. 
+
+Alternatively, you can pin your installation to the old version, e.g. `pip install openai==0.28`
+
+A detailed migration guide is available here: https://github.com/openai/openai-python/discussions/742
+
+2025-05-10 10:52:33,646 - root - ERROR - Error in text embedding: 
+
+You tried to access openai.Embedding, but this is no longer supported in openai>=1.0.0 - see the README at https://github.com/openai/openai-python for the API.
+
+You can run `openai migrate` to automatically upgrade your codebase to use the 1.0.0 interface. 
+
+Alternatively, you can pin your installation to the old version, e.g. `pip install openai==0.28`
+
+A detailed migration guide is available here: https://github.com/openai/openai-python/discussions/742
+
+2025-05-10 10:52:33,855 - root - ERROR - Error in text embedding: 
+
+You tried to access openai.Embedding, but this is no longer supported in openai>=1.0.0 - see the README at https://github.com/openai/openai-python for the API.
+
+You can run `openai migrate` to automatically upgrade your codebase to use the 1.0.0 interface. 
+
+Alternatively, you can pin your installation to the old version, e.g. `pip install openai==0.28`
+
+A detailed migration guide is available here: https://github.com/openai/openai-python/discussions/742
+
+2025-05-10 10:52:34,056 - root - ERROR - Error in text embedding: 
+
+You tried to access openai.Embedding, but this is no longer supported in openai>=1.0.0 - see the README at https://github.com/openai/openai-python for the API.
+
+You can run `openai migrate` to automatically upgrade your codebase to use the 1.0.0 interface. 
+
+Alternatively, you can pin your installation to the old version, e.g. `pip install openai==0.28`
+
+A detailed migration guide is available here: https://github.com/openai/openai-python/discussions/742
+
+2025-05-10 10:52:34,268 - root - ERROR - Error in text embedding: 
+
+You tried to access openai.Embedding, but this is no longer supported in openai>=1.0.0 - see the README at https://github.com/openai/openai-python for the API.
+
+You can run `openai migrate` to automatically upgrade your codebase to use the 1.0.0 interface. 
+
+Alternatively, you can pin your installation to the old version, e.g. `pip install openai==0.28`
+
+A detailed migration guide is available here: https://github.com/openai/openai-python/discussions/742
+
+2025-05-10 10:52:34,470 - root - ERROR - Error in text embedding: 
+
+You tried to access openai.Embedding, but this is no longer supported in openai>=1.0.0 - see the README at https://github.com/openai/openai-python for the API.
+
+You can run `openai migrate` to automatically upgrade your codebase to use the 1.0.0 interface. 
+
+Alternatively, you can pin your installation to the old version, e.g. `pip install openai==0.28`
+
+A detailed migration guide is available here: https://github.com/openai/openai-python/discussions/742
+
+2025-05-10 10:52:34,678 - root - ERROR - Error in text embedding: 
+
+You tried to access openai.Embedding, but this is no longer supported in openai>=1.0.0 - see the README at https://github.com/openai/openai-python for the API.
+
+You can run `openai migrate` to automatically upgrade your codebase to use the 1.0.0 interface. 
+
+Alternatively, you can pin your installation to the old version, e.g. `pip install openai==0.28`
+
+A detailed migration guide is available here: https://github.com/openai/openai-python/discussions/742
+
+2025-05-10 10:52:34,887 - root - ERROR - Error in text embedding: 
+
+You tried to access openai.Embedding, but this is no longer supported in openai>=1.0.0 - see the README at https://github.com/openai/openai-python for the API.
+
+You can run `openai migrate` to automatically upgrade your codebase to use the 1.0.0 interface. 
+
+Alternatively, you can pin your installation to the old version, e.g. `pip install openai==0.28`
+
+A detailed migration guide is available here: https://github.com/openai/openai-python/discussions/742
+
+2025-05-10 10:52:35,093 - root - ERROR - Error in text embedding: 
+
+You tried to access openai.Embedding, but this is no longer supported in openai>=1.0.0 - see the README at https://github.com/openai/openai-python for the API.
+
+You can run `openai migrate` to automatically upgrade your codebase to use the 1.0.0 interface. 
+
+Alternatively, you can pin your installation to the old version, e.g. `pip install openai==0.28`
+
+A detailed migration guide is available here: https://github.com/openai/openai-python/discussions/742
+
+2025-05-10 10:52:35,303 - root - ERROR - Error in text embedding: 
+
+You tried to access openai.Embedding, but this is no longer supported in openai>=1.0.0 - see the README at https://github.com/openai/openai-python for the API.
+
+You can run `openai migrate` to automatically upgrade your codebase to use the 1.0.0 interface. 
+
+Alternatively, you can pin your installation to the old version, e.g. `pip install openai==0.28`
+
+A detailed migration guide is available here: https://github.com/openai/openai-python/discussions/742
+
+2025-05-10 10:52:35,517 - root - ERROR - Error in text embedding: 
+
+You tried to access openai.Embedding, but this is no longer supported in openai>=1.0.0 - see the README at https://github.com/openai/openai-python for the API.
+
+You can run `openai migrate` to automatically upgrade your codebase to use the 1.0.0 interface. 
+
+Alternatively, you can pin your installation to the old version, e.g. `pip install openai==0.28`
+
+A detailed migration guide is available here: https://github.com/openai/openai-python/discussions/742
+
+2025-05-10 10:52:35,720 - root - ERROR - Error in text embedding: 
+
+You tried to access openai.Embedding, but this is no longer supported in openai>=1.0.0 - see the README at https://github.com/openai/openai-python for the API.
+
+You can run `openai migrate` to automatically upgrade your codebase to use the 1.0.0 interface. 
+
+Alternatively, you can pin your installation to the old version, e.g. `pip install openai==0.28`
+
+A detailed migration guide is available here: https://github.com/openai/openai-python/discussions/742
+
+2025-05-10 10:52:35,928 - root - ERROR - Error in text embedding: 
+
+You tried to access openai.Embedding, but this is no longer supported in openai>=1.0.0 - see the README at https://github.com/openai/openai-python for the API.
+
+You can run `openai migrate` to automatically upgrade your codebase to use the 1.0.0 interface. 
+
+Alternatively, you can pin your installation to the old version, e.g. `pip install openai==0.28`
+
+A detailed migration guide is available here: https://github.com/openai/openai-python/discussions/742
+
+2025-05-10 10:52:36,130 - root - ERROR - Error in text embedding: 
+
+You tried to access openai.Embedding, but this is no longer supported in openai>=1.0.0 - see the README at https://github.com/openai/openai-python for the API.
+
+You can run `openai migrate` to automatically upgrade your codebase to use the 1.0.0 interface. 
+
+Alternatively, you can pin your installation to the old version, e.g. `pip install openai==0.28`
+
+A detailed migration guide is available here: https://github.com/openai/openai-python/discussions/742
+
+2025-05-10 10:52:36,344 - root - ERROR - Error in text embedding: 
+
+You tried to access openai.Embedding, but this is no longer supported in openai>=1.0.0 - see the README at https://github.com/openai/openai-python for the API.
+
+You can run `openai migrate` to automatically upgrade your codebase to use the 1.0.0 interface. 
+
+Alternatively, you can pin your installation to the old version, e.g. `pip install openai==0.28`
+
+A detailed migration guide is available here: https://github.com/openai/openai-python/discussions/742
+
+2025-05-10 10:52:36,547 - root - ERROR - Error in text embedding: 
+
+You tried to access openai.Embedding, but this is no longer supported in openai>=1.0.0 - see the README at https://github.com/openai/openai-python for the API.
+
+You can run `openai migrate` to automatically upgrade your codebase to use the 1.0.0 interface. 
+
+Alternatively, you can pin your installation to the old version, e.g. `pip install openai==0.28`
+
+A detailed migration guide is available here: https://github.com/openai/openai-python/discussions/742
+
+2025-05-10 10:52:36,762 - root - ERROR - Error in text embedding: 
+
+You tried to access openai.Embedding, but this is no longer supported in openai>=1.0.0 - see the README at https://github.com/openai/openai-python for the API.
+
+You can run `openai migrate` to automatically upgrade your codebase to use the 1.0.0 interface. 
+
+Alternatively, you can pin your installation to the old version, e.g. `pip install openai==0.28`
+
+A detailed migration guide is available here: https://github.com/openai/openai-python/discussions/742
+
+2025-05-10 10:52:36,970 - root - ERROR - Error in text embedding: 
+
+You tried to access openai.Embedding, but this is no longer supported in openai>=1.0.0 - see the README at https://github.com/openai/openai-python for the API.
+
+You can run `openai migrate` to automatically upgrade your codebase to use the 1.0.0 interface. 
+
+Alternatively, you can pin your installation to the old version, e.g. `pip install openai==0.28`
+
+A detailed migration guide is available here: https://github.com/openai/openai-python/discussions/742
+
+2025-05-10 10:52:37,175 - root - ERROR - Error in text embedding: 
+
+You tried to access openai.Embedding, but this is no longer supported in openai>=1.0.0 - see the README at https://github.com/openai/openai-python for the API.
+
+You can run `openai migrate` to automatically upgrade your codebase to use the 1.0.0 interface. 
+
+Alternatively, you can pin your installation to the old version, e.g. `pip install openai==0.28`
+
+A detailed migration guide is available here: https://github.com/openai/openai-python/discussions/742
+
+2025-05-10 10:52:37,383 - root - ERROR - Error in text embedding: 
+
+You tried to access openai.Embedding, but this is no longer supported in openai>=1.0.0 - see the README at https://github.com/openai/openai-python for the API.
+
+You can run `openai migrate` to automatically upgrade your codebase to use the 1.0.0 interface. 
+
+Alternatively, you can pin your installation to the old version, e.g. `pip install openai==0.28`
+
+A detailed migration guide is available here: https://github.com/openai/openai-python/discussions/742
+
+2025-05-10 10:52:37,590 - root - ERROR - Error in text embedding: 
+
+You tried to access openai.Embedding, but this is no longer supported in openai>=1.0.0 - see the README at https://github.com/openai/openai-python for the API.
+
+You can run `openai migrate` to automatically upgrade your codebase to use the 1.0.0 interface. 
+
+Alternatively, you can pin your installation to the old version, e.g. `pip install openai==0.28`
+
+A detailed migration guide is available here: https://github.com/openai/openai-python/discussions/742
+
+2025-05-10 10:52:37,801 - root - ERROR - Error in text embedding: 
+
+You tried to access openai.Embedding, but this is no longer supported in openai>=1.0.0 - see the README at https://github.com/openai/openai-python for the API.
+
+You can run `openai migrate` to automatically upgrade your codebase to use the 1.0.0 interface. 
+
+Alternatively, you can pin your installation to the old version, e.g. `pip install openai==0.28`
+
+A detailed migration guide is available here: https://github.com/openai/openai-python/discussions/742
+
+2025-05-10 10:52:38,013 - root - ERROR - Error in text embedding: 
+
+You tried to access openai.Embedding, but this is no longer supported in openai>=1.0.0 - see the README at https://github.com/openai/openai-python for the API.
+
+You can run `openai migrate` to automatically upgrade your codebase to use the 1.0.0 interface. 
+
+Alternatively, you can pin your installation to the old version, e.g. `pip install openai==0.28`
+
+A detailed migration guide is available here: https://github.com/openai/openai-python/discussions/742
+
+2025-05-10 10:52:38,519 - root - ERROR - Error in LLM generation: 
+
+You tried to access openai.ChatCompletion, but this is no longer supported in openai>=1.0.0 - see the README at https://github.com/openai/openai-python for the API.
+
+You can run `openai migrate` to automatically upgrade your codebase to use the 1.0.0 interface. 
+
+Alternatively, you can pin your installation to the old version, e.g. `pip install openai==0.28`
+
+A detailed migration guide is available here: https://github.com/openai/openai-python/discussions/742
+
+2025-05-10 10:52:39,023 - root - ERROR - Error in LLM generation: 
+
+You tried to access openai.ChatCompletion, but this is no longer supported in openai>=1.0.0 - see the README at https://github.com/openai/openai-python for the API.
+
+You can run `openai migrate` to automatically upgrade your codebase to use the 1.0.0 interface. 
+
+Alternatively, you can pin your installation to the old version, e.g. `pip install openai==0.28`
+
+A detailed migration guide is available here: https://github.com/openai/openai-python/discussions/742
+
+2025-05-10 10:52:39,528 - root - ERROR - Error in LLM generation: 
+
+You tried to access openai.ChatCompletion, but this is no longer supported in openai>=1.0.0 - see the README at https://github.com/openai/openai-python for the API.
+
+You can run `openai migrate` to automatically upgrade your codebase to use the 1.0.0 interface. 
+
+Alternatively, you can pin your installation to the old version, e.g. `pip install openai==0.28`
+
+A detailed migration guide is available here: https://github.com/openai/openai-python/discussions/742
+
+2025-05-10 10:52:40,082 - root - ERROR - Error in LLM generation: 
+
+You tried to access openai.ChatCompletion, but this is no longer supported in openai>=1.0.0 - see the README at https://github.com/openai/openai-python for the API.
+
+You can run `openai migrate` to automatically upgrade your codebase to use the 1.0.0 interface. 
+
+Alternatively, you can pin your installation to the old version, e.g. `pip install openai==0.28`
+
+A detailed migration guide is available here: https://github.com/openai/openai-python/discussions/742
+
+2025-05-10 10:52:40,585 - root - ERROR - Error in LLM generation: 
+
+You tried to access openai.ChatCompletion, but this is no longer supported in openai>=1.0.0 - see the README at https://github.com/openai/openai-python for the API.
+
+You can run `openai migrate` to automatically upgrade your codebase to use the 1.0.0 interface. 
+
+Alternatively, you can pin your installation to the old version, e.g. `pip install openai==0.28`
+
+A detailed migration guide is available here: https://github.com/openai/openai-python/discussions/742
+
+2025-05-10 10:52:41,092 - root - ERROR - Error in LLM generation: 
+
+You tried to access openai.ChatCompletion, but this is no longer supported in openai>=1.0.0 - see the README at https://github.com/openai/openai-python for the API.
+
+You can run `openai migrate` to automatically upgrade your codebase to use the 1.0.0 interface. 
+
+Alternatively, you can pin your installation to the old version, e.g. `pip install openai==0.28`
+
+A detailed migration guide is available here: https://github.com/openai/openai-python/discussions/742
+
+2025-05-10 10:52:41,599 - root - ERROR - Error in LLM generation: 
+
+You tried to access openai.ChatCompletion, but this is no longer supported in openai>=1.0.0 - see the README at https://github.com/openai/openai-python for the API.
+
+You can run `openai migrate` to automatically upgrade your codebase to use the 1.0.0 interface. 
+
+Alternatively, you can pin your installation to the old version, e.g. `pip install openai==0.28`
+
+A detailed migration guide is available here: https://github.com/openai/openai-python/discussions/742
+
+2025-05-10 10:52:42,100 - root - ERROR - Error in LLM generation: 
+
+You tried to access openai.ChatCompletion, but this is no longer supported in openai>=1.0.0 - see the README at https://github.com/openai/openai-python for the API.
+
+You can run `openai migrate` to automatically upgrade your codebase to use the 1.0.0 interface. 
+
+Alternatively, you can pin your installation to the old version, e.g. `pip install openai==0.28`
+
+A detailed migration guide is available here: https://github.com/openai/openai-python/discussions/742
+
+2025-05-10 10:52:42,608 - root - ERROR - Error in LLM generation: 
+
+You tried to access openai.ChatCompletion, but this is no longer supported in openai>=1.0.0 - see the README at https://github.com/openai/openai-python for the API.
+
+You can run `openai migrate` to automatically upgrade your codebase to use the 1.0.0 interface. 
+
+Alternatively, you can pin your installation to the old version, e.g. `pip install openai==0.28`
+
+A detailed migration guide is available here: https://github.com/openai/openai-python/discussions/742
+
+2025-05-10 10:52:43,121 - root - ERROR - Error in LLM generation: 
+
+You tried to access openai.ChatCompletion, but this is no longer supported in openai>=1.0.0 - see the README at https://github.com/openai/openai-python for the API.
+
+You can run `openai migrate` to automatically upgrade your codebase to use the 1.0.0 interface. 
+
+Alternatively, you can pin your installation to the old version, e.g. `pip install openai==0.28`
+
+A detailed migration guide is available here: https://github.com/openai/openai-python/discussions/742
+
+2025-05-10 10:52:43,122 - root - INFO - Memory management result: {'before': {'hot_memory': {'size': 820, 'capacity': 200, 'segment_count': 20, 'utilization': '410.0%'}, 'warm_memory': {'size': 0, 'capacity': 400, 'segment_count': 0, 'utilization': '0.0%'}, 'cold_memory': {'size': 0, 'capacity': 800, 'segment_count': 0, 'utilization': '0.0%'}, 'total': {'size': 820, 'capacity': 1400, 'segment_count': 20}}, 'after': {'hot_memory': {'size': 410, 'capacity': 200, 'segment_count': 10, 'utilization': '205.0%'}, 'warm_memory': {'size': 190, 'capacity': 400, 'segment_count': 10, 'utilization': '47.5%'}, 'cold_memory': {'size': 0, 'capacity': 800, 'segment_count': 0, 'utilization': '0.0%'}, 'total': {'size': 600, 'capacity': 1400, 'segment_count': 20}}}
+2025-05-10 10:52:43,123 - root - INFO - Memory management tests passed!
+2025-05-10 10:52:43,126 - root - INFO - Testing user interaction flow...
+2025-05-10 10:52:43,128 - root - INFO - Initializing SelectiveCompressionSystem with model mock-model
+2025-05-10 10:52:43,128 - root - WARNING - No OpenAI API key provided. Set OPENAI_API_KEY environment variable.
+2025-05-10 10:52:43,129 - root - INFO - Initialized LLM interface
+2025-05-10 10:52:43,131 - root - WARNING - Could not load spaCy model: [E050] Can't find model 'en_core_web_sm'. It doesn't seem to be a Python package or a valid path to a data directory.
+2025-05-10 10:52:43,131 - root - INFO - Initialized entity extractor
+2025-05-10 10:52:43,131 - root - INFO - Initialized compressor module
+2025-05-10 10:52:43,131 - root - INFO - Initialized relevance evaluator
+2025-05-10 10:52:43,131 - root - INFO - Initialized memory manager
+2025-05-10 10:52:43,131 - root - INFO - Initialized retrieval engine
+2025-05-10 10:52:43,135 - root - INFO - Integration layer initialized
+2025-05-10 10:52:43,135 - root - INFO - Initialized integration layer
+2025-05-10 10:52:43,135 - root - INFO - Selective Compression System initialization complete
+2025-05-10 10:52:43,139 - root - INFO - Initialized MockLLMInterface with model gpt-4o-mini
+2025-05-10 10:52:43,139 - root - INFO - Processing user input: Hello, my name is Alice....
+2025-05-10 10:52:43,653 - root - ERROR - Error in LLM generation: 
+
+You tried to access openai.ChatCompletion, but this is no longer supported in openai>=1.0.0 - see the README at https://github.com/openai/openai-python for the API.
+
+You can run `openai migrate` to automatically upgrade your codebase to use the 1.0.0 interface. 
+
+Alternatively, you can pin your installation to the old version, e.g. `pip install openai==0.28`
+
+A detailed migration guide is available here: https://github.com/openai/openai-python/discussions/742
+
+2025-05-10 10:52:43,653 - root - INFO - Response 1: Error generating response: 
+
+You tried to access openai.ChatCompletion, but this is no longer supported in openai>=1.0.0 - see ...
+2025-05-10 10:52:43,653 - root - INFO - Processing user input: I'm interested in learning about selective compres...
+2025-05-10 10:52:44,156 - root - ERROR - Error in LLM generation: 
+
+You tried to access openai.ChatCompletion, but this is no longer supported in openai>=1.0.0 - see the README at https://github.com/openai/openai-python for the API.
+
+You can run `openai migrate` to automatically upgrade your codebase to use the 1.0.0 interface. 
+
+Alternatively, you can pin your installation to the old version, e.g. `pip install openai==0.28`
+
+A detailed migration guide is available here: https://github.com/openai/openai-python/discussions/742
+
+2025-05-10 10:52:44,158 - root - INFO - Response 2: Error generating response: 
+
+You tried to access openai.ChatCompletion, but this is no longer supported in openai>=1.0.0 - see ...
+2025-05-10 10:52:44,158 - root - INFO - Processing user input: Can you remember what my name was?...
+2025-05-10 10:52:44,669 - root - ERROR - Error in LLM generation: 
+
+You tried to access openai.ChatCompletion, but this is no longer supported in openai>=1.0.0 - see the README at https://github.com/openai/openai-python for the API.
+
+You can run `openai migrate` to automatically upgrade your codebase to use the 1.0.0 interface. 
+
+Alternatively, you can pin your installation to the old version, e.g. `pip install openai==0.28`
+
+A detailed migration guide is available here: https://github.com/openai/openai-python/discussions/742
+
+2025-05-10 10:52:44,670 - root - INFO - Response 3: Error generating response: 
+
+You tried to access openai.ChatCompletion, but this is no longer supported in openai>=1.0.0 - see ...
+2025-05-10 10:52:44,671 - root - INFO - Hot memory contents: Hello, my name is Alice.
+
+---
+
+Error generating response: 
+
+You tried to access openai.ChatCompletion, but this is no longer supported in openai>=1.0.0 - see ...
+
+---
+
+I'm interested in learning about selective compression systems.
+
+---
+
+Error generating response: 
+
+You tried to access openai.ChatCompletion, but this is no longer supported in openai>=1.0.0 - see ...
+
+---
+
+Can you remember what my name was?
+
+---
+
+Error generating response: 
+
+You tried to access openai.ChatCompletion, but this is no longer supported in openai>=1.0.0 - see ...
+2025-05-10 10:52:44,671 - root - INFO - Final memory stats: {'hot_memory': {'size': 77, 'capacity': 4000, 'segment_count': 6, 'utilization': '1.9%'}, 'warm_memory': {'size': 0, 'capacity': 16000, 'segment_count': 0, 'utilization': '0.0%'}, 'cold_memory': {'size': 0, 'capacity': 64000, 'segment_count': 0, 'utilization': '0.0%'}, 'total': {'size': 77, 'capacity': 84000, 'segment_count': 6}}
+2025-05-10 10:52:44,671 - root - INFO - User interaction flow tests passed!
+2025-05-10 10:58:49,916 - root - INFO - Testing memory tiers...
+2025-05-10 10:58:49,916 - root - INFO - Memory tier tests passed!
+2025-05-10 10:58:49,916 - root - INFO - Testing entity extraction...
+2025-05-10 10:58:49,916 - root - WARNING - Could not load spaCy model: [E050] Can't find model 'en_core_web_sm'. It doesn't seem to be a Python package or a valid path to a data directory.
+2025-05-10 10:58:49,916 - root - INFO - Extracted entities: ['john', 'smith', 'met', 'sarah', 'johnson', 'google', 'headquarters', 'mountain', 'view', 'discussed', 'new', 'ai', 'project', 'its', 'impact']
+2025-05-10 10:58:49,916 - root - INFO - Extracted relationships: [('john', 'related-to', 'smith'), ('john', 'related-to', 'met'), ('john', 'related-to', 'sarah'), ('john', 'related-to', 'johnson'), ('john', 'related-to', 'google'), ('john', 'related-to', 'headquarters'), ('john', 'related-to', 'mountain'), ('john', 'related-to', 'view'), ('john', 'related-to', 'ai'), ('smith', 'related-to', 'met')]
+2025-05-10 10:58:49,916 - root - INFO - Entity extraction tests passed!
+2025-05-10 10:58:49,916 - root - INFO - Testing compression and decompression...
+2025-05-10 10:58:49,916 - root - INFO - Initialized MockLLMInterface with model gpt-4o-mini
+2025-05-10 10:58:49,916 - root - WARNING - Could not load spaCy model: [E050] Can't find model 'en_core_web_sm'. It doesn't seem to be a Python package or a valid path to a data directory.
+2025-05-10 10:58:49,924 - root - INFO - Mock generate called with prompt length: 704
+2025-05-10 10:58:49,924 - root - INFO - Light compression result: COMPRESSED: oncerns about privacy, security, and job displacement.
+        
+        Compressed version:
+        ...
+2025-05-10 10:58:49,925 - root - INFO - Mock generate called with prompt length: 1078
+2025-05-10 10:58:49,925 - root - INFO - Heavy compression result: COMPRESSED: privacy, security, and job displacement.
+        
+        Highly compressed representation:
+        ...
+2025-05-10 10:58:49,927 - root - INFO - Mock generate called with prompt length: 383
+2025-05-10 10:58:49,927 - root - INFO - Mock generate called with prompt length: 584
+2025-05-10 10:58:49,927 - root - INFO - Light decompression result: COMPRESSED: ment.
+        
+        Compressed version:
+        ...
+        
+        Detailed expansion:
+        ...
+2025-05-10 10:58:49,927 - root - INFO - Heavy decompression result: COMPRESSED: 
+        Highly compressed representation:
+        ...
+        
+        Detailed expansion:
+        ...
+2025-05-10 10:58:49,927 - root - INFO - Compression and decompression tests passed!
+2025-05-10 10:58:49,927 - root - INFO - Testing memory management...
+2025-05-10 10:58:49,927 - root - INFO - Initialized MockLLMInterface with model gpt-4o-mini
+2025-05-10 10:58:49,930 - root - INFO - Initializing SelectiveCompressionSystem with model mock-model
+2025-05-10 10:58:49,930 - root - WARNING - No OpenAI API key provided. Set OPENAI_API_KEY environment variable.
+2025-05-10 10:58:49,930 - root - INFO - Initialized LLM interface
+2025-05-10 10:58:49,932 - root - WARNING - Could not load spaCy model: [E050] Can't find model 'en_core_web_sm'. It doesn't seem to be a Python package or a valid path to a data directory.
+2025-05-10 10:58:49,932 - root - INFO - Initialized entity extractor
+2025-05-10 10:58:49,932 - root - INFO - Initialized compressor module
+2025-05-10 10:58:49,932 - root - INFO - Initialized relevance evaluator
+2025-05-10 10:58:49,932 - root - INFO - Initialized memory manager
+2025-05-10 10:58:49,932 - root - INFO - Initialized retrieval engine
+2025-05-10 10:58:49,932 - root - INFO - Integration layer initialized
+2025-05-10 10:58:49,940 - root - INFO - Initialized integration layer
+2025-05-10 10:58:49,940 - root - INFO - Selective Compression System initialization complete
+2025-05-10 10:58:49,940 - root - INFO - Memory stats after 0 additions: {'hot_memory': {'size': 41, 'capacity': 200, 'segment_count': 1, 'utilization': '20.5%'}, 'warm_memory': {'size': 0, 'capacity': 400, 'segment_count': 0, 'utilization': '0.0%'}, 'cold_memory': {'size': 0, 'capacity': 800, 'segment_count': 0, 'utilization': '0.0%'}, 'total': {'size': 41, 'capacity': 1400, 'segment_count': 1}}
+2025-05-10 10:58:49,940 - root - INFO - Memory stats after 5 additions: {'hot_memory': {'size': 246, 'capacity': 200, 'segment_count': 6, 'utilization': '123.0%'}, 'warm_memory': {'size': 0, 'capacity': 400, 'segment_count': 0, 'utilization': '0.0%'}, 'cold_memory': {'size': 0, 'capacity': 800, 'segment_count': 0, 'utilization': '0.0%'}, 'total': {'size': 246, 'capacity': 1400, 'segment_count': 6}}
+2025-05-10 10:58:49,940 - root - INFO - Memory stats after 10 additions: {'hot_memory': {'size': 451, 'capacity': 200, 'segment_count': 11, 'utilization': '225.5%'}, 'warm_memory': {'size': 0, 'capacity': 400, 'segment_count': 0, 'utilization': '0.0%'}, 'cold_memory': {'size': 0, 'capacity': 800, 'segment_count': 0, 'utilization': '0.0%'}, 'total': {'size': 451, 'capacity': 1400, 'segment_count': 11}}
+2025-05-10 10:58:49,940 - root - INFO - Memory stats after 15 additions: {'hot_memory': {'size': 656, 'capacity': 200, 'segment_count': 16, 'utilization': '328.0%'}, 'warm_memory': {'size': 0, 'capacity': 400, 'segment_count': 0, 'utilization': '0.0%'}, 'cold_memory': {'size': 0, 'capacity': 800, 'segment_count': 0, 'utilization': '0.0%'}, 'total': {'size': 656, 'capacity': 1400, 'segment_count': 16}}
+2025-05-10 10:58:50,149 - root - ERROR - Error in text embedding: No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+2025-05-10 10:58:50,355 - root - ERROR - Error in text embedding: No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+2025-05-10 10:58:50,569 - root - ERROR - Error in text embedding: No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+2025-05-10 10:58:50,795 - root - ERROR - Error in text embedding: No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+2025-05-10 10:58:51,001 - root - ERROR - Error in text embedding: No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+2025-05-10 10:58:51,214 - root - ERROR - Error in text embedding: No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+2025-05-10 10:58:51,418 - root - ERROR - Error in text embedding: No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+2025-05-10 10:58:51,624 - root - ERROR - Error in text embedding: No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+2025-05-10 10:58:51,828 - root - ERROR - Error in text embedding: No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+2025-05-10 10:58:52,036 - root - ERROR - Error in text embedding: No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+2025-05-10 10:58:52,250 - root - ERROR - Error in text embedding: No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+2025-05-10 10:58:52,459 - root - ERROR - Error in text embedding: No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+2025-05-10 10:58:52,669 - root - ERROR - Error in text embedding: No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+2025-05-10 10:58:52,883 - root - ERROR - Error in text embedding: No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+2025-05-10 10:58:53,093 - root - ERROR - Error in text embedding: No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+2025-05-10 10:58:53,320 - root - ERROR - Error in text embedding: No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+2025-05-10 10:58:53,537 - root - ERROR - Error in text embedding: No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+2025-05-10 10:58:53,738 - root - ERROR - Error in text embedding: No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+2025-05-10 10:58:53,947 - root - ERROR - Error in text embedding: No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+2025-05-10 10:58:54,162 - root - ERROR - Error in text embedding: No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+2025-05-10 10:58:54,365 - root - ERROR - Error in text embedding: No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+2025-05-10 10:58:54,578 - root - ERROR - Error in text embedding: No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+2025-05-10 10:58:54,784 - root - ERROR - Error in text embedding: No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+2025-05-10 10:58:54,996 - root - ERROR - Error in text embedding: No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+2025-05-10 10:58:55,203 - root - ERROR - Error in text embedding: No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+2025-05-10 10:58:55,404 - root - ERROR - Error in text embedding: No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+2025-05-10 10:58:55,619 - root - ERROR - Error in text embedding: No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+2025-05-10 10:58:55,850 - root - ERROR - Error in text embedding: No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+2025-05-10 10:58:56,066 - root - ERROR - Error in text embedding: No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+2025-05-10 10:58:56,275 - root - ERROR - Error in text embedding: No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+2025-05-10 10:58:56,485 - root - ERROR - Error in text embedding: No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+2025-05-10 10:58:56,696 - root - ERROR - Error in text embedding: No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+2025-05-10 10:58:56,905 - root - ERROR - Error in text embedding: No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+2025-05-10 10:58:57,114 - root - ERROR - Error in text embedding: No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+2025-05-10 10:58:57,325 - root - ERROR - Error in text embedding: No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+2025-05-10 10:58:57,532 - root - ERROR - Error in text embedding: No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+2025-05-10 10:58:57,745 - root - ERROR - Error in text embedding: No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+2025-05-10 10:58:57,953 - root - ERROR - Error in text embedding: No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+2025-05-10 10:58:58,166 - root - ERROR - Error in text embedding: No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+2025-05-10 10:58:58,370 - root - ERROR - Error in text embedding: No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
