@@ -1,0 +1,7 @@
+{
+    "model_name": "gpt-4o-mini",
+    "hot_size": 4000,
+    "warm_size": 16000,
+    "cold_size": 64000,
+    "timestamp": "20250510_111721"
+}

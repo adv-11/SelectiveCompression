@@ -1,67 +1,49 @@
-"""
-Selective Compression System Research Benchmarking
-
-This script benchmarks the Selective Compression Memory System, testing its performance
-under various scenarios and collecting metrics related to compression ratios,
-memory utilization, response quality, and system behavior.
-"""
-
-import os
+import argparse
 import time
 import json
+import os
 import random
 import logging
-import argparse
 import matplotlib.pyplot as plt
 import numpy as np
-from tqdm import tqdm
+from matplotlib.ticker import MaxNLocator
 from datetime import datetime
-import pandas as pd
-import seaborn as sns
-from typing import Dict, List, Tuple, Any, Optional
 
-# Import system components
-from core.system import SelectiveCompressionSystem
-from core.memory import MemorySegment
-from modules.entity_extractor import EntityExtractor
-
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler("benchmark_results.log"),
-        logging.StreamHandler()
-    ]
-)
+# Set up logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-class ResearchBenchmark:
-    """Benchmark class for testing Selective Compression System."""
+# Import the system components
+from core.system import SelectiveCompressionSystem
+from core.memory import MemorySegment
+
+class CompressionBenchmark:
+    """Class to benchmark the selective compression memory system"""
     
-    def __init__(self, 
-                 model_name: str = "gpt-4o-mini", 
-                 hot_size: int = 2000, 
-                 warm_size: int = 8000, 
-                 cold_size: int = 32000,
-                 api_key: Optional[str] = None):
-        """Initialize benchmarking environment.
+    def __init__(self, model_name="gpt-4o-mini", hot_size=4000, warm_size=16000, cold_size=64000, 
+                 output_dir="benchmark_results", api_key=None):
+        """Initialize the benchmark.
         
         Args:
-            model_name: LLM model to use
-            hot_size: Hot memory size in tokens
-            warm_size: Warm memory size in tokens
-            cold_size: Cold memory size in tokens
-            api_key: API key for the LLM service
+            model_name (str): Name of the LLM model to use
+            hot_size (int): Size of hot memory in tokens
+            warm_size (int): Size of warm memory in tokens
+            cold_size (int): Size of cold memory in tokens
+            output_dir (str): Directory to save results
+            api_key (str, optional): API key for LLM service
         """
         self.model_name = model_name
         self.hot_size = hot_size
         self.warm_size = warm_size
         self.cold_size = cold_size
-        self.api_key = api_key or os.environ.get("OPENAI_API_KEY")
+        self.output_dir = output_dir
+        self.api_key = api_key
         
-        if not self.api_key:
-            raise ValueError("No API key provided. Set OPENAI_API_KEY env variable or pass it as argument.")
+        # Create output directory
+        os.makedirs(output_dir, exist_ok=True)
+        
+        # Timestamp for this run
+        self.timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         
         # Initialize system
         self.system = SelectiveCompressionSystem(
@@ -69,603 +51,835 @@ class ResearchBenchmark:
             hot_size=hot_size,
             warm_size=warm_size,
             cold_size=cold_size,
-            api_key=self.api_key
+            api_key=api_key
         )
         
-        # Storage for benchmark results
-        self.results = {
-            "compression_ratios": [],
-            "memory_utilization": [],
+        # Metrics to track
+        self.metrics = {
             "response_times": [],
-            "retrieval_quality": [],
-            "system_behavior": [],
-            "entity_preservation": []
+            "compression_ratios": [],
+            "memory_usage": [],
+            "retrieval_count": [],
+            "relevance_scores": [],
+            "compression_times": [],
+            "decompression_times": [],
+            "tier_transitions": {
+                "hot_to_warm": 0,
+                "warm_to_cold": 0,
+                "cold_to_evict": 0
+            },
+            "tier_sizes_over_time": {
+                "hot": [],
+                "warm": [],
+                "cold": []
+            },
+            "conversation_length": 0
         }
         
-        # Setup output directory
-        self.timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        self.output_dir = f"benchmark_results_{self.timestamp}"
-        os.makedirs(self.output_dir, exist_ok=True)
-        
         logger.info(f"Initialized benchmark with model {model_name}")
-        logger.info(f"Memory config: hot={hot_size}, warm={warm_size}, cold={cold_size}")
         
-    def load_test_data(self, filepath: str) -> List[Dict[str, str]]:
-        """Load test conversation data from file.
+    def load_conversation_dataset(self, file_path):
+        """Load a conversation dataset from a JSON file.
         
         Args:
-            filepath: Path to test data file (JSON format)
+            file_path (str): Path to the JSON file
             
         Returns:
-            List of conversation turns
+            list: List of conversation turns
         """
         try:
-            with open(filepath, 'r') as f:
+            with open(file_path, 'r', encoding='utf-8') as f:
                 data = json.load(f)
-            logger.info(f"Loaded {len(data)} conversation turns from {filepath}")
+            
+            logger.info(f"Loaded conversation dataset with {len(data)} turns")
             return data
         except Exception as e:
-            logger.error(f"Error loading test data: {str(e)}")
-            # Generate synthetic data as fallback
-            logger.info("Generating synthetic test data as fallback")
-            return self.generate_synthetic_data(100)
-    
-    def generate_synthetic_data(self, num_turns: int) -> List[Dict[str, str]]:
-        """Generate synthetic conversation data for testing.
+            logger.error(f"Error loading conversation dataset: {str(e)}")
+            # Create simple fallback dataset
+            return [
+                {"user": "Hello, how are you today?"},
+                {"user": "Can you tell me about memory systems in AI?"},
+                {"user": "What are the challenges with long-term memory in LLMs?"},
+                {"user": "How does selective compression help with memory?"},
+                {"user": "Can you explain the difference between episodic and semantic memory?"}
+            ]
+            
+    def create_synthetic_dataset(self, size=100, topic_clusters=5, noise_factor=0.2):
+        """Create a synthetic conversation dataset with topic clusters.
         
         Args:
-            num_turns: Number of conversation turns to generate
+            size (int): Number of conversation turns
+            topic_clusters (int): Number of distinct topics
+            noise_factor (float): Probability of random unrelated messages
             
         Returns:
-            List of conversation turns
+            list: List of conversation turns
         """
-        topics = ["machine learning", "climate change", "space exploration", 
-                 "renewable energy", "quantum computing", "artificial intelligence",
-                 "virtual reality", "blockchain technology", "genetic engineering",
-                 "robotics", "cybersecurity", "nanotechnology"]
-        
-        questions = [
-            "What are the latest developments in {topic}?",
-            "How does {topic} impact daily life?",
-            "Can you explain the basic principles of {topic}?",
-            "What are the ethical concerns related to {topic}?",
-            "How has {topic} evolved over the past decade?",
-            "What's the relationship between {topic} and sustainability?",
-            "Who are the leading experts in {topic}?",
-            "Can you compare {topic} with similar technologies?",
-            "What are the limitations of current {topic} approaches?",
-            "How might {topic} change in the next 5 years?"
+        topics = [
+            "Artificial Intelligence and Machine Learning",
+            "Memory Systems in Cognitive Science",
+            "Software Engineering and Architecture",
+            "Natural Language Processing",
+            "Ethics and Bias in AI",
+            "Climate Change and Environmental Science",
+            "Biotechnology and Medicine",
+            "Quantum Computing",
+            "Space Exploration and Astronomy",
+            "Robotics and Automation"
         ]
         
-        follow_ups = [
-            "Tell me more about that.",
-            "Why is that significant?",
-            "How does that compare to previous approaches?",
-            "What are the practical applications?",
-            "Are there any risks associated with that?",
-            "Who is working on addressing those challenges?",
-            "Can you elaborate on the technical details?",
-            "How would that affect the average person?",
-            "What's your assessment of this development?",
-            "Are there alternative perspectives on this issue?"
-        ]
+        # Select a subset of topics
+        selected_topics = random.sample(topics, min(topic_clusters, len(topics)))
         
-        data = []
-        current_topic = random.choice(topics)
-        topic_turns = 0
-        max_topic_turns = random.randint(3, 8)
-        
-        for i in range(num_turns):
-            # Occasionally change topic
-            if topic_turns >= max_topic_turns:
-                current_topic = random.choice(topics)
-                topic_turns = 0
-                max_topic_turns = random.randint(3, 8)
+        # Generate questions for each topic
+        topic_questions = {}
+        for topic in selected_topics:
+            questions = self._generate_topic_questions(topic, size // topic_clusters)
+            topic_questions[topic] = questions
             
-            if topic_turns == 0:
-                # Start new topic with a question
-                user_input = random.choice(questions).format(topic=current_topic)
+        # Create dataset with interleaved topics
+        dataset = []
+        topic_order = []
+        
+        # Create a sequence that interleaves topics with some repetition
+        for i in range(size):
+            # Either continue current topic or switch
+            if i > 0 and random.random() < 0.7 and topic_order[-1] in selected_topics:
+                topic = topic_order[-1]  # Stay on same topic
             else:
-                # Follow up on existing topic
-                user_input = random.choice(follow_ups)
+                # Switch topics
+                topic = random.choice(selected_topics)
             
-            data.append({"role": "user", "content": user_input})
-            topic_turns += 1
+            topic_order.append(topic)
+            
+        # Add noise to the topic sequence
+        for i in range(size):
+            if random.random() < noise_factor:
+                topic_order[i] = "Random"
         
-        return data
+        # Generate turns from topics
+        for i, topic in enumerate(topic_order):
+            if topic == "Random":
+                # Random unrelated question
+                dataset.append({"user": f"Random question {i}: {self._generate_random_question()}"})
+            else:
+                # Question from the topic
+                questions = topic_questions[topic]
+                question_index = i % len(questions)
+                dataset.append({"user": questions[question_index]})
+                
+        logger.info(f"Created synthetic dataset with {len(dataset)} turns across {topic_clusters} topics")
+        return dataset
     
-    def run_memory_test(self, test_data: List[Dict[str, str]]) -> None:
-        """Run memory test with conversation data.
+    def _generate_topic_questions(self, topic, count):
+        """Generate questions related to a topic.
         
         Args:
-            test_data: List of conversation turns
+            topic (str): Topic to generate questions for
+            count (int): Number of questions to generate
+            
+        Returns:
+            list: List of questions
         """
-        logger.info("Starting memory test...")
-        
-        memory_stats = []
-        compression_events = []
-        retrieval_events = []
-        response_times = []
-        
-        # Process each conversation turn
-        for i, turn in enumerate(tqdm(test_data, desc="Processing turns")):
-            if turn["role"] != "user":
-                continue
-                
-            # Process user input and measure response time
-            start_time = time.time()
-            response = self.system.process_input(turn["content"])
-            end_time = time.time()
-            response_time = end_time - start_time
-            response_times.append(response_time)
-            
-            # Collect memory stats after each turn
-            stats = self.system.get_memory_stats()
-            memory_stats.append({
-                "turn": i,
-                "hot_size": stats["hot_memory"]["size"],
-                "warm_size": stats["warm_memory"]["size"],
-                "cold_size": stats["cold_memory"]["size"],
-                "hot_segments": stats["hot_memory"]["segment_count"],
-                "warm_segments": stats["warm_memory"]["segment_count"],
-                "cold_segments": stats["cold_memory"]["segment_count"],
-                "response_time": response_time
-            })
-            
-            # Force memory management every 10 turns to simulate pressure
-            if i > 0 and i % 10 == 0:
-                logger.info(f"Forcing memory management at turn {i}")
-                management_results = self.system.force_memory_management()
-                
-                # Track compression events
-                if "before" in management_results and "after" in management_results:
-                    before = management_results["before"]
-                    after = management_results["after"]
-                    
-                    # Calculate changes
-                    hot_change = before["hot_memory"]["segment_count"] - after["hot_memory"]["segment_count"]
-                    warm_change = after["warm_memory"]["segment_count"] - before["warm_memory"]["segment_count"]
-                    cold_change = after["cold_memory"]["segment_count"] - before["cold_memory"]["segment_count"]
-                    
-                    if hot_change > 0:  # Compression happened
-                        compression_events.append({
-                            "turn": i,
-                            "hot_to_warm": hot_change,
-                            "warm_to_cold": warm_change,
-                            "evicted": max(0, warm_change - cold_change)
-                        })
-        
-        # Save results
-        self.results["memory_utilization"] = memory_stats
-        self.results["compression_events"] = compression_events
-        self.results["response_times"] = response_times
-        
-        # Save raw data
-        pd.DataFrame(memory_stats).to_csv(
-            os.path.join(self.output_dir, "memory_stats.csv"), 
-            index=False
-        )
-        
-        logger.info("Memory test completed.")
-    
-    def run_compression_ratio_test(self) -> None:
-        """Test compression ratios across different content types."""
-        logger.info("Starting compression ratio test...")
-        
-        # Define test content of different types
-        test_contents = {
-            "factual": [
-                "The speed of light in a vacuum is 299,792,458 meters per second. This constant, denoted by 'c', is a fundamental physical constant. It plays a crucial role in many areas of physics, including Einstein's theory of special relativity, which states that the speed of light is the same for all observers, regardless of their relative motion or the motion of the light source.",
-                "Mount Everest is Earth's highest mountain above sea level, located in the Mahalangur Himal sub-range of the Himalayas. The China–Nepal border runs across its summit point. Its elevation of 8,848.86 m was most recently established in 2020 by the Chinese and Nepali authorities."
+        # Template questions by topic
+        templates = {
+            "Artificial Intelligence and Machine Learning": [
+                "What are the key differences between {x} and {y} in machine learning?",
+                "How does {x} improve model performance in AI systems?",
+                "Can you explain the concept of {x} in the context of deep learning?",
+                "What are the limitations of using {x} for {y} tasks?",
+                "How is {x} implemented in practical AI applications?"
             ],
-            "conversational": [
-                "User: Can you help me understand how neural networks work?\nAssistant: Of course! Neural networks are computing systems inspired by biological neural networks in animal brains. They consist of artificial neurons organized in layers that can learn patterns from data. The basic structure includes an input layer, one or more hidden layers, and an output layer. Each connection between neurons has a weight that adjusts during training to minimize error.",
-                "User: What's the difference between machine learning and deep learning?\nAssistant: Great question! Machine learning is a broader field focusing on algorithms that improve through experience. Deep learning is actually a subset of machine learning that specifically uses neural networks with multiple layers (hence 'deep'). While traditional machine learning often requires feature engineering, deep learning automatically discovers relevant features in the data through its layered structure."
+            "Memory Systems in Cognitive Science": [
+                "How does {x} memory work in the human brain?",
+                "What's the relationship between {x} and {y} in memory formation?",
+                "Can you explain the role of {x} in memory retrieval?",
+                "How do {x} memory systems differ from {y} systems?",
+                "What are the key mechanisms of {x} in memory consolidation?"
             ],
-            "narrative": [
-                "The old lighthouse stood lonely against the darkening sky, its beam cutting through the approaching storm. Captain Morris had seen many such nights during his fifty years at sea, but something about this one felt different. The waves crashed against the rocky shore with unusual force, as if driven by some ancient anger.",
-                "Sarah gazed at the constellation Orion from her balcony, remembering how her grandfather had taught her to find it when she was just seven years old. 'The stars will always guide you home,' he'd said. Now, twenty years later and a thousand miles from where she grew up, those same stars brought a comforting familiarity to an otherwise foreign sky."
+            "Software Engineering and Architecture": [
+                "What are best practices for implementing {x} in software architecture?",
+                "How does {x} compare to {y} in terms of scalability?",
+                "Can you explain the principles of {x} in modern software design?",
+                "What are the challenges of maintaining {x} in large codebases?",
+                "How does {x} architecture handle {y} problems?"
+            ],
+            "Natural Language Processing": [
+                "How do {x} models handle {y} in text processing?",
+                "What are the limitations of {x} for understanding context?",
+                "Can you explain how {x} improves {y} in NLP systems?",
+                "What's the difference between {x} and {y} approaches to NLP?",
+                "How does {x} help with {y} in language understanding?"
+            ],
+            "Ethics and Bias in AI": [
+                "How does {x} bias manifest in AI systems?",
+                "What methods are effective for reducing {x} in ML models?",
+                "Can you explain the ethical implications of {x} in AI development?",
+                "How do {x} and {y} biases interact in decision systems?",
+                "What responsibility do developers have regarding {x} issues?"
+            ],
+            "Climate Change and Environmental Science": [
+                "How does {x} contribute to climate change?",
+                "What are the effects of {x} on {y} ecosystems?",
+                "Can you explain the relationship between {x} and {y} in environmental systems?",
+                "What are the most promising solutions for addressing {x}?",
+                "How does {x} impact global {y} patterns?"
+            ],
+            "Biotechnology and Medicine": [
+                "How is {x} technology applied in modern medicine?",
+                "What are the ethical considerations of using {x} for {y}?",
+                "Can you explain how {x} works at the molecular level?",
+                "What are the limitations of current {x} therapies?",
+                "How does {x} compare to {y} in treating {z} conditions?"
+            ],
+            "Quantum Computing": [
+                "How does {x} work in quantum computing systems?",
+                "What are the challenges of implementing {x} in quantum algorithms?",
+                "Can you explain the principle of {x} in quantum mechanics?",
+                "How does {x} differ between classical and quantum computing?",
+                "What are the practical applications of {x} in quantum technology?"
+            ],
+            "Space Exploration and Astronomy": [
+                "What have we learned about {x} from recent space missions?",
+                "How does {x} affect {y} in space environments?",
+                "Can you explain the phenomenon of {x} in astronomical terms?",
+                "What are the challenges of studying {x} with current technology?",
+                "How does {x} relate to theories about {y}?"
+            ],
+            "Robotics and Automation": [
+                "How are {x} sensors used in modern robotics?",
+                "What are the challenges of implementing {x} in automated systems?",
+                "Can you explain how {x} algorithms help robots navigate?",
+                "How does {x} technology compare to {y} for automation tasks?",
+                "What ethical considerations arise from {x} in robotics?"
             ]
         }
         
-        results = []
+        # Topic-specific fillers
+        fillers = {
+            "Artificial Intelligence and Machine Learning": {
+                "x": ["supervised learning", "unsupervised learning", "reinforcement learning", 
+                      "neural networks", "decision trees", "support vector machines", "backpropagation",
+                      "gradient descent", "transfer learning", "attention mechanisms"],
+                "y": ["classification", "regression", "clustering", "dimensionality reduction",
+                      "natural language processing", "computer vision", "speech recognition"]
+            },
+            "Memory Systems in Cognitive Science": {
+                "x": ["episodic", "semantic", "procedural", "working", "short-term", "long-term",
+                      "autobiographical", "implicit", "explicit", "declarative"],
+                "y": ["encoding", "storage", "retrieval", "recall", "recognition", "forgetting",
+                      "consolidation", "interference"]
+            },
+            "Software Engineering and Architecture": {
+                "x": ["microservices", "monolithic", "serverless", "event-driven", "layered",
+                      "object-oriented", "functional", "reactive", "MVC", "MVVM"],
+                "y": ["scalability", "maintainability", "testability", "performance", "security",
+                      "reliability", "availability", "fault tolerance"]
+            },
+            "Natural Language Processing": {
+                "x": ["transformer", "BERT", "GPT", "RNN", "LSTM", "word embeddings", "tokenization",
+                      "attention", "fine-tuning", "zero-shot learning"],
+                "y": ["sentiment analysis", "named entity recognition", "text classification",
+                      "machine translation", "summarization", "question answering"]
+            },
+            "Ethics and Bias in AI": {
+                "x": ["algorithmic", "data", "selection", "confirmation", "representation", "evaluation",
+                      "historical", "societal", "deployment", "feedback loop"],
+                "y": ["racial", "gender", "socioeconomic", "cultural", "linguistic", "geographical"]
+            },
+            "Climate Change and Environmental Science": {
+                "x": ["carbon emissions", "deforestation", "ocean acidification", "methane release",
+                      "greenhouse gases", "industrialization", "urbanization", "agriculture"],
+                "y": ["marine", "forest", "arctic", "tropical", "freshwater", "desert", "grassland"]
+            },
+            "Biotechnology and Medicine": {
+                "x": ["CRISPR", "gene therapy", "stem cell", "immunotherapy", "mRNA", "antibody",
+                      "genomic", "proteomic", "bioinformatic", "synthetic biology"],
+                "y": ["cancer", "genetic disorders", "infectious diseases", "autoimmune conditions",
+                      "neurological disorders", "aging", "regenerative medicine"],
+                "z": ["chronic", "acute", "inherited", "acquired", "degenerative", "infectious"]
+            },
+            "Quantum Computing": {
+                "x": ["superposition", "entanglement", "quantum gates", "qubits", "quantum annealing",
+                      "quantum error correction", "quantum supremacy", "quantum tunneling"],
+                "y": ["factorization", "optimization", "simulation", "cryptography", "machine learning"]
+            },
+            "Space Exploration and Astronomy": {
+                "x": ["black holes", "exoplanets", "dark matter", "dark energy", "gravity waves",
+                      "cosmic microwave background", "solar winds", "neutron stars"],
+                "y": ["galaxy formation", "planetary systems", "stellar evolution", "cosmic expansion",
+                      "habitability", "interstellar travel", "space colonization"]
+            },
+            "Robotics and Automation": {
+                "x": ["computer vision", "path planning", "reinforcement learning", "SLAM", "haptic",
+                      "force feedback", "robotic arms", "autonomous navigation"],
+                "y": ["industrial", "medical", "domestic", "search and rescue", "agricultural",
+                      "underwater", "space exploration", "military"]
+            }
+        }
         
-        # Test each content type
-        for content_type, contents in test_contents.items():
-            for content in contents:
-                # Create a test segment
-                segment = MemorySegment(
-                    content=content,
-                    id=f"test_{content_type}_{len(content)%100}",
-                    creation_time=time.time(),
-                    importance=0.5
-                )
+        # Generate questions
+        questions = []
+        if topic in templates and topic in fillers:
+            template_list = templates[topic]
+            filler_dict = fillers[topic]
+            
+            for _ in range(count):
+                # Select random template
+                template = random.choice(template_list)
                 
-                # Get original size
-                original_size = segment.get_size()
+                # Fill in placeholders
+                question = template
+                for key in filler_dict:
+                    if key in question:
+                        value = random.choice(filler_dict[key])
+                        question = question.replace(f"{{{key}}}", value)
                 
-                # Compress at level 1
-                compressed_l1 = self.system.compressor.compress(segment, level=1)
-                l1_size = compressed_l1.get_size()
-                l1_ratio = original_size / l1_size if l1_size > 0 else float('inf')
+                questions.append(question)
+        else:
+            # Default questions if topic not found
+            for i in range(count):
+                questions.append(f"Question {i+1} about {topic}")
                 
-                # Compress at level 2
-                compressed_l2 = self.system.compressor.compress(segment, level=2)
-                l2_size = compressed_l2.get_size()
-                l2_ratio = original_size / l2_size if l2_size > 0 else float('inf')
-                
-                # Entity preservation test
-                original_entities = self.system.entity_extractor.extract_entities(content)
-                l1_entities = self.system.entity_extractor.extract_entities(compressed_l1.content)
-                l2_entities = self.system.entity_extractor.extract_entities(compressed_l2.content)
-                
-                # Calculate entity preservation ratios
-                l1_entity_preservation = len(set(l1_entities).intersection(set(original_entities))) / len(original_entities) if original_entities else 1.0
-                l2_entity_preservation = len(set(l2_entities).intersection(set(original_entities))) / len(original_entities) if original_entities else 1.0
-                
-                # Record results
-                results.append({
-                    "content_type": content_type,
-                    "original_size": original_size,
-                    "l1_size": l1_size,
-                    "l2_size": l2_size,
-                    "l1_ratio": l1_ratio,
-                    "l2_ratio": l2_ratio,
-                    "original_entities": len(original_entities),
-                    "l1_entities": len(l1_entities),
-                    "l2_entities": len(l2_entities),
-                    "l1_entity_preservation": l1_entity_preservation,
-                    "l2_entity_preservation": l2_entity_preservation
-                })
+        return questions
         
-        # Save results
-        self.results["compression_ratios"] = results
-        pd.DataFrame(results).to_csv(
-            os.path.join(self.output_dir, "compression_ratios.csv"), 
-            index=False
-        )
+    def _generate_random_question(self):
+        """Generate a random unrelated question.
         
-        logger.info("Compression ratio test completed.")
-    
-    def run_relevance_test(self) -> None:
-        """Test the relevance evaluation component."""
-        logger.info("Starting relevance evaluation test...")
-        
-        # Create test segments with varying degrees of relevance
-        current_context = """
-        We've been discussing neural networks and their applications in computer vision.
-        Specifically, we covered convolutional neural networks (CNNs) and how they use
-        filters to detect features in images. We also touched on transfer learning as 
-        a technique to leverage pre-trained models.
+        Returns:
+            str: Random question
         """
-        
-        test_queries = [
-            "Can you explain how CNNs work?",
-            "What are some applications of transfer learning?",
-            "How do neural networks compare to traditional computer vision techniques?"
+        random_questions = [
+            "What's your favorite color?",
+            "Do you have any recommendations for good books?",
+            "How do I make a good pasta sauce?",
+            "Can you tell me a joke?",
+            "What's the weather like today?",
+            "How tall is the Empire State Building?",
+            "Who won the World Cup in 2018?",
+            "What's the capital of Australia?",
+            "How do I change a tire on my car?",
+            "What's the airspeed velocity of an unladen swallow?",
+            "Can you recommend a good movie to watch?",
+            "What's the difference between alligators and crocodiles?",
+            "How do I get red wine stains out of carpet?",
+            "What's the best way to learn a new language?",
+            "How many planets are in our solar system?"
         ]
-        
-        test_segments = [
-            # High relevance
-            MemorySegment(
-                content="Convolutional Neural Networks (CNNs) are designed for processing data with grid-like topology, such as images. They use convolutional layers that apply filters to detect features like edges, textures, and patterns. Each filter slides across the input, creating a feature map highlighting where specific patterns occur.",
-                id="high_rel_1",
-                creation_time=time.time() - 3600,  # 1 hour ago
-                importance=0.8
-            ),
-            # Medium relevance
-            MemorySegment(
-                content="Transfer learning allows you to leverage knowledge from pre-trained models on large datasets. Instead of training from scratch, you can use the learned feature representations and fine-tune the model on your specific task, which is particularly useful when you have limited data.",
-                id="med_rel_1",
-                creation_time=time.time() - 7200,  # 2 hours ago
-                importance=0.6
-            ),
-            # Low relevance
-            MemorySegment(
-                content="Reinforcement learning is a type of machine learning where an agent learns to make decisions by taking actions in an environment to maximize some notion of cumulative reward. It's been successfully applied to game playing, robotics, and autonomous driving.",
-                id="low_rel_1",
-                creation_time=time.time() - 1800,  # 30 minutes ago
-                importance=0.4
-            ),
-            # Irrelevant
-            MemorySegment(
-                content="Climate change is leading to rising sea levels, more frequent extreme weather events, and changing precipitation patterns. Mitigation strategies include reducing carbon emissions, transitioning to renewable energy, and improving energy efficiency.",
-                id="irrel_1",
-                creation_time=time.time() - 300,  # 5 minutes ago
-                importance=0.2
-            )
-        ]
-        
-        relevance_scores = []
-        
-        # Test each segment against the current context and queries
-        for segment in test_segments:
-            # Base relevance to context
-            base_score = self.system.relevance_evaluator.calculate_importance(
-                segment, current_context
-            )
-            
-            # Relevance to each query
-            query_scores = []
-            for query in test_queries:
-                score = self.system.relevance_evaluator.calculate_importance(
-                    segment, current_context, query
-                )
-                query_scores.append(score)
-            
-            relevance_scores.append({
-                "segment_id": segment.id,
-                "content_sample": segment.content[:50] + "...",
-                "age_hours": (time.time() - segment.creation_time) / 3600,
-                "base_relevance": base_score,
-                "query1_relevance": query_scores[0],
-                "query2_relevance": query_scores[1],
-                "query3_relevance": query_scores[2],
-                "avg_query_relevance": sum(query_scores) / len(query_scores)
-            })
-        
-        # Save results
-        self.results["relevance_evaluation"] = relevance_scores
-        pd.DataFrame(relevance_scores).to_csv(
-            os.path.join(self.output_dir, "relevance_scores.csv"), 
-            index=False
-        )
-        
-        logger.info("Relevance evaluation test completed.")
+        return random.choice(random_questions)
     
-    def test_retrieval_accuracy(self) -> None:
-        """Test the accuracy of memory retrieval under different conditions."""
-        logger.info("Starting retrieval accuracy test...")
+    def run_benchmark(self, conversation_data, track_metrics=True):
+        """Run benchmark on the conversation dataset.
         
-        # Reset system for clean test
+        Args:
+            conversation_data (list): List of conversation turns
+            track_metrics (bool): Whether to track metrics
+            
+        Returns:
+            dict: Benchmark results
+        """
+        logger.info(f"Starting benchmark with {len(conversation_data)} conversation turns")
+        
+        # Reset system
         self.system.reset_memory()
         
-        # Create a sequence of related content with a specific fact
-        target_facts = [
-            "The AWS Lambda cold start time for Python functions is typically between 100-200ms.",
-            "The melting point of tungsten is 3422°C, the highest of all metals.",
-            "The Voyager 1 spacecraft is currently about 14 billion miles from Earth.",
-            "Octopuses have three hearts: two pump blood through the gills, while the third pumps it through the body."
-        ]
+        # Reset metrics
+        if track_metrics:
+            self.metrics = {
+                "response_times": [],
+                "compression_ratios": [],
+                "memory_usage": [],
+                "retrieval_count": [],
+                "relevance_scores": [],
+                "compression_times": [],
+                "decompression_times": [],
+                "tier_transitions": {
+                    "hot_to_warm": 0,
+                    "warm_to_cold": 0,
+                    "cold_to_evict": 0
+                },
+                "tier_sizes_over_time": {
+                    "hot": [],
+                    "warm": [],
+                    "cold": []
+                },
+                "conversation_length": 0
+            }
         
-        # Generate conversation turns that include the target facts
-        memory_segments = []
-        for i, fact in enumerate(target_facts):
-            # Add some context around the fact
-            memory_segments.append({
-                "content": f"Here's an interesting fact: {fact} This is something worth remembering.",
-                "delay": i * 5  # Each fact is separated by more conversation turns
-            })
-        
-        # Add distractors between facts
-        topics = ["weather", "sports", "technology", "food", "travel", "movies", "music", "books"]
-        for i in range(30):  # Add 30 distractor segments
-            topic = random.choice(topics)
-            memory_segments.append({
-                "content": f"Let's talk about {topic}. There are many interesting aspects of {topic} worth discussing.",
-                "delay": random.randint(0, 20)
-            })
-        
-        # Sort based on insertion order
-        memory_segments.sort(key=lambda x: x["delay"])
-        
-        # Insert memories into system
-        for segment in memory_segments:
-            self.system.memory_manager.add_to_hot_memory(segment["content"])
+        # Process each conversation turn
+        for i, turn in enumerate(conversation_data):
+            logger.info(f"Processing turn {i+1}/{len(conversation_data)}")
             
-            # Simulate time passing and memory management
-            if random.random() < 0.3:  # 30% chance of memory management
-                self.system.memory_manager.manage_memory_tiers()
+            user_input = turn.get("user", "")
+            if not user_input:
+                continue
+                
+            # Record initial memory state
+            if track_metrics:
+                initial_stats = self.system.get_memory_stats()
+                initial_hot_count = len(self.system.memory_manager.hot_memory.segments)
+                initial_warm_count = len(self.system.memory_manager.warm_memory.segments)
+                initial_cold_count = len(self.system.memory_manager.cold_memory.segments)
+                
+            # Process user input and time it
+            start_time = time.time()
+            response = self.system.process_input(user_input)
+            end_time = time.time()
+            response_time = end_time - start_time
+            
+            # Record post-processing memory state
+            if track_metrics:
+                # Update memory usage stats
+                stats = self.system.get_memory_stats()
+                self.metrics["memory_usage"].append({
+                    "turn": i,
+                    "hot": stats["hot_memory"]["size"],
+                    "warm": stats["warm_memory"]["size"],
+                    "cold": stats["cold_memory"]["size"],
+                    "total": stats["total"]["size"]
+                })
+                
+                # Count tier transitions
+                final_hot_count = len(self.system.memory_manager.hot_memory.segments)
+                final_warm_count = len(self.system.memory_manager.warm_memory.segments)
+                final_cold_count = len(self.system.memory_manager.cold_memory.segments)
+                
+                # Track tier transitions
+                hot_to_warm = max(0, initial_hot_count - final_hot_count + 2)  # +2 for user input and response
+                warm_to_cold = max(0, initial_warm_count - final_warm_count + hot_to_warm)
+                cold_to_evict = max(0, initial_cold_count - final_cold_count + warm_to_cold)
+                
+                self.metrics["tier_transitions"]["hot_to_warm"] += hot_to_warm
+                self.metrics["tier_transitions"]["warm_to_cold"] += warm_to_cold
+                self.metrics["tier_transitions"]["cold_to_evict"] += cold_to_evict
+                
+                # Track response time
+                self.metrics["response_times"].append(response_time)
+                
+                # Track tier sizes
+                self.metrics["tier_sizes_over_time"]["hot"].append(stats["hot_memory"]["size"])
+                self.metrics["tier_sizes_over_time"]["warm"].append(stats["warm_memory"]["size"])
+                self.metrics["tier_sizes_over_time"]["cold"].append(stats["cold_memory"]["size"])
+                
+                # Estimate compression ratios for any segments that moved tiers
+                for segment_id in self.system.memory_manager.warm_memory.segments:
+                    segment = self.system.memory_manager.warm_memory.segments[segment_id]
+                    if hasattr(segment, 'metadata') and 'compression_ratio' in segment.metadata:
+                        self.metrics["compression_ratios"].append(segment.metadata['compression_ratio'])
+                        
+                self.metrics["conversation_length"] += 1
+                
+            # Optional: sleep to avoid rate limiting
+            time.sleep(0.5)
+            
+        logger.info(f"Benchmark completed with {self.metrics['conversation_length']} turns")
+        return self.metrics
+    
+    def evaluate_memory_retrieval(self, test_queries, reference_context, relevance_threshold=0.6):
+        """Evaluate memory retrieval performance.
         
-        # Force memory management to push some facts to warm/cold memory
-        for _ in range(3):
-            self.system.memory_manager.manage_memory_tiers()
+        Args:
+            test_queries (list): List of test queries
+            reference_context (str): Reference context to compare against
+            relevance_threshold (float): Threshold for relevant retrieval
+            
+        Returns:
+            dict: Evaluation results
+        """
+        logger.info(f"Evaluating memory retrieval with {len(test_queries)} test queries")
         
-        # Now test retrieval for each target fact
-        retrieval_results = []
-        for i, fact in enumerate(target_facts):
-            # Construct query related to the fact
-            if i == 0:
-                query = "What was the cold start time for AWS Lambda functions?"
-            elif i == 1:
-                query = "What metal has the highest melting point?"
-            elif i == 2:
-                query = "How far is Voyager 1 from Earth?"
+        results = {
+            "retrieval_accuracy": [],
+            "retrieval_relevance": [],
+            "retrieval_time": []
+        }
+        
+        for i, query in enumerate(test_queries):
+            logger.info(f"Processing test query {i+1}/{len(test_queries)}")
+            
+            # Process query and time it
+            start_time = time.time()
+            # Get current context from hot memory
+            current_context = self.system.get_hot_memory_contents()
+            
+            # Find relevant memory segments
+            relevant_segments = self.system.retrieval_engine.identify_relevant_segments(
+                current_context, query
+            )
+            end_time = time.time()
+            retrieval_time = end_time - start_time
+            
+            # Calculate relevance to reference context
+            relevance_scores = []
+            for segment in relevant_segments:
+                relevance = self.system.relevance_evaluator.calculate_importance(
+                    segment, reference_context, query
+                )
+                relevance_scores.append(relevance)
+            
+            # Calculate metrics
+            avg_relevance = sum(relevance_scores) / max(1, len(relevance_scores))
+            accuracy = len([r for r in relevance_scores if r > relevance_threshold]) / max(1, len(relevance_scores))
+            
+            results["retrieval_accuracy"].append(accuracy)
+            results["retrieval_relevance"].append(avg_relevance)
+            results["retrieval_time"].append(retrieval_time)
+            
+        # Calculate summary statistics
+        results["avg_accuracy"] = sum(results["retrieval_accuracy"]) / max(1, len(results["retrieval_accuracy"]))
+        results["avg_relevance"] = sum(results["retrieval_relevance"]) / max(1, len(results["retrieval_relevance"]))
+        results["avg_retrieval_time"] = sum(results["retrieval_time"]) / max(1, len(results["retrieval_time"]))
+        
+        logger.info(f"Memory retrieval evaluation complete")
+        return results
+    
+    def evaluate_compression_quality(self, sample_size=10):
+        """Evaluate the quality of compression.
+        
+        Args:
+            sample_size (int): Number of segments to evaluate
+            
+        Returns:
+            dict: Evaluation results
+        """
+        logger.info(f"Evaluating compression quality with sample size {sample_size}")
+        
+        results = {
+            "compression_ratios": [],
+            "semantic_similarity": [],
+            "entity_preservation": []
+        }
+        
+        # Sample segments from warm memory
+        warm_segments = list(self.system.memory_manager.warm_memory.segments.values())
+        if len(warm_segments) == 0:
+            logger.warning("No segments in warm memory for compression evaluation")
+            return results
+            
+        samples = random.sample(warm_segments, min(sample_size, len(warm_segments)))
+        
+        for i, segment in enumerate(samples):
+            logger.info(f"Evaluating compression for segment {i+1}/{len(samples)}")
+            
+            # Get compression ratio
+            if hasattr(segment, 'metadata') and 'compression_ratio' in segment.metadata:
+                compression_ratio = segment.metadata['compression_ratio']
+                results["compression_ratios"].append(compression_ratio)
+                
+                # Get original entities if available
+                if 'original_entities' in segment.metadata:
+                    original_entities = segment.metadata['original_entities']
+                    
+                    # Extract entities from compressed content
+                    compressed_entities = self.system.entity_extractor.extract_entities(segment.content)
+                    
+                    # Calculate entity preservation
+                    if original_entities:
+                        preserved = len(set(compressed_entities).intersection(set(original_entities)))
+                        preservation_rate = preserved / len(original_entities)
+                        results["entity_preservation"].append(preservation_rate)
+                        
+                # Decompress segment
+                try:
+                    decompressed = self.system.retrieval_engine.decompress_segment(segment)
+                    
+                    # Calculate semantic similarity between original and decompressed
+                    if hasattr(segment, 'metadata') and 'original_length' in segment.metadata:
+                        # We don't have the original content, so we'll use semantic similarity
+                        # with the decompressed content as a proxy
+                        semantic_similarity = self.system.relevance_evaluator._calculate_semantic_similarity(
+                            segment, decompressed.content
+                        )
+                        results["semantic_similarity"].append(semantic_similarity)
+                except Exception as e:
+                    logger.error(f"Error decompressing segment: {str(e)}")
+        
+        # Calculate summary statistics
+        results["avg_compression_ratio"] = sum(results["compression_ratios"]) / max(1, len(results["compression_ratios"]))
+        results["avg_semantic_similarity"] = sum(results["semantic_similarity"]) / max(1, len(results["semantic_similarity"]))
+        results["avg_entity_preservation"] = sum(results["entity_preservation"]) / max(1, len(results["entity_preservation"]))
+        
+        logger.info(f"Compression quality evaluation complete")
+        return results
+    
+    def plot_memory_usage(self, save_path=None):
+        """Plot memory usage over time.
+        
+        Args:
+            save_path (str, optional): Path to save the plot
+        """
+        if not self.metrics["memory_usage"]:
+            logger.warning("No memory usage data to plot")
+            return
+            
+        plt.figure(figsize=(10, 6))
+        
+        turns = [entry["turn"] for entry in self.metrics["memory_usage"]]
+        hot = [entry["hot"] for entry in self.metrics["memory_usage"]]
+        warm = [entry["warm"] for entry in self.metrics["memory_usage"]]
+        cold = [entry["cold"] for entry in self.metrics["memory_usage"]]
+        total = [entry["total"] for entry in self.metrics["memory_usage"]]
+        
+        plt.plot(turns, hot, 'r-', label='Hot Memory')
+        plt.plot(turns, warm, 'g-', label='Warm Memory')
+        plt.plot(turns, cold, 'b-', label='Cold Memory')
+        plt.plot(turns, total, 'k--', label='Total Memory')
+        
+        plt.title('Memory Usage Over Time')
+        plt.xlabel('Conversation Turn')
+        plt.ylabel('Memory Size (tokens)')
+        plt.legend()
+        plt.grid(True, linestyle='--', alpha=0.7)
+        
+        # Set x-axis to show only integer values
+        ax = plt.gca()
+        ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+        
+        if save_path:
+            plt.savefig(save_path, dpi=300, bbox_inches='tight')
+            logger.info(f"Saved memory usage plot to {save_path}")
+        else:
+            plt.show()
+        
+        plt.close()
+    
+    def plot_tier_transitions(self, save_path=None):
+        """Plot memory tier transitions.
+        
+        Args:
+            save_path (str, optional): Path to save the plot
+        """
+        if not self.metrics["tier_transitions"]:
+            logger.warning("No tier transitions data to plot")
+            return
+            
+        plt.figure(figsize=(8, 6))
+        
+        transitions = self.metrics["tier_transitions"]
+        labels = ["Hot → Warm", "Warm → Cold", "Cold → Evicted"]
+        values = [transitions["hot_to_warm"], transitions["warm_to_cold"], transitions["cold_to_evict"]]
+        
+        plt.bar(labels, values, color=['#ff9999', '#66b3ff', '#99ff99'])
+        
+        plt.title('Memory Tier Transitions')
+        plt.xlabel('Transition Type')
+        plt.ylabel('Number of Transitions')
+        plt.grid(True, axis='y', linestyle='--', alpha=0.7)
+        
+        for i, v in enumerate(values):
+            plt.text(i, v + 0.5, str(v), ha='center')
+        
+        if save_path:
+            plt.savefig(save_path, dpi=300, bbox_inches='tight')
+            logger.info(f"Saved tier transitions plot to {save_path}")
+        else:
+            plt.show()
+        
+        plt.close()
+    
+    def plot_response_times(self, save_path=None):
+        """Plot response times over conversation turns.
+        
+        Args:
+            save_path (str, optional): Path to save the plot
+        """
+        if not self.metrics["response_times"]:
+            logger.warning("No response time data to plot")
+            return
+            
+        plt.figure(figsize=(10, 6))
+        
+        turns = list(range(1, len(self.metrics["response_times"]) + 1))
+        times = self.metrics["response_times"]
+        
+        plt.plot(turns, times, 'b-', marker='o', markersize=4)
+        
+        # Add trend line
+        z = np.polyfit(turns, times, 1)
+        p = np.poly1d(z)
+        plt.plot(turns, p(turns), "r--", alpha=0.7, label=f"Trend: {z[0]:.4f}x + {z[1]:.4f}")
+        
+        plt.title('Response Time Over Conversation Length')
+        plt.xlabel('Conversation Turn')
+        plt.ylabel('Response Time (seconds)')
+        plt.legend()
+        plt.grid(True, linestyle='--', alpha=0.7)
+        
+        # Set x-axis to show only integer values
+        ax = plt.gca()
+        ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+        
+        if save_path:
+            plt.savefig(save_path, dpi=300, bbox_inches='tight')
+            logger.info(f"Saved response times plot to {save_path}")
+        else:
+            plt.show()
+        
+        plt.close()
+        
+    def plot_compression_ratios(self, save_path=None):
+        """Plot compression ratios.
+        
+        Args:
+            save_path (str, optional): Path to save the plot
+        """
+        if not self.metrics["compression_ratios"]:
+            logger.warning("No compression ratio data to plot")
+            return
+            
+        plt.figure(figsize=(8, 6))
+        
+        # Create histogram of compression ratios
+        plt.hist(self.metrics["compression_ratios"], bins=10, color='skyblue', edgecolor='black')
+        
+        plt.title('Distribution of Compression Ratios')
+        plt.xlabel('Compression Ratio')
+        plt.ylabel('Frequency')
+        plt.grid(True, axis='y', linestyle='--', alpha=0.7)
+        
+        # Add mean line
+        mean_ratio = sum(self.metrics["compression_ratios"]) / len(self.metrics["compression_ratios"])
+        plt.axvline(mean_ratio, color='r', linestyle='--', label=f'Mean: {mean_ratio:.2f}')
+        plt.legend()
+        
+        if save_path:
+            plt.savefig(save_path, dpi=300, bbox_inches='tight')
+            logger.info(f"Saved compression ratios plot to {save_path}")
+        else:
+            plt.show()
+        
+        plt.close()
+
+    def save_results(self):
+        """Save benchmark results to files.
+        
+        Returns:
+            str: Path to results directory
+        """
+        # Create results directory
+        results_dir = os.path.join(self.output_dir, f"benchmark_{self.timestamp}")
+        os.makedirs(results_dir, exist_ok=True)
+        
+        # Save metrics as JSON
+        metrics_file = os.path.join(results_dir, "metrics.json")
+        with open(metrics_file, 'w', encoding='utf-8') as f:
+            # Convert numpy arrays to lists for JSON serialization
+            serializable_metrics = {}
+            for key, value in self.metrics.items():
+                if isinstance(value, (list, dict)):
+                    serializable_metrics[key] = value
+                elif isinstance(value, np.ndarray):
+                    serializable_metrics[key] = value.tolist()
+                else:
+                    serializable_metrics[key] = value
+                    
+            json.dump(serializable_metrics, f, indent=4)
+        
+        # Generate and save plots
+        self.plot_memory_usage(save_path=os.path.join(results_dir, "memory_usage.png"))
+        self.plot_tier_transitions(save_path=os.path.join(results_dir, "tier_transitions.png"))
+        self.plot_response_times(save_path=os.path.join(results_dir, "response_times.png"))
+        self.plot_compression_ratios(save_path=os.path.join(results_dir, "compression_ratios.png"))
+        
+        # Save configuration
+        config = {
+            "model_name": self.model_name,
+            "hot_size": self.hot_size,
+            "warm_size": self.warm_size,
+            "cold_size": self.cold_size,
+            "timestamp": self.timestamp
+        }
+        
+        config_file = os.path.join(results_dir, "config.json")
+        with open(config_file, 'w', encoding='utf-8') as f:
+            json.dump(config, f, indent=4)
+            
+        logger.info(f"Saved benchmark results to {results_dir}")
+        return results_dir
+    
+    def run_full_benchmark(self, conversation_data=None, dataset_path=None, synthetic=False, 
+                          synthetic_size=100, synthetic_topics=5):
+        """Run a complete benchmark with all evaluations.
+        
+        Args:
+            conversation_data (list, optional): List of conversation turns
+            dataset_path (str, optional): Path to conversation dataset
+            synthetic (bool): Whether to use synthetic data
+            synthetic_size (int): Size of synthetic dataset
+            synthetic_topics (int): Number of topics in synthetic dataset
+            
+        Returns:
+            dict: Benchmark results
+        """
+        # Load conversation data
+        if conversation_data is None:
+            if synthetic:
+                conversation_data = self.create_synthetic_dataset(
+                    size=synthetic_size, topic_clusters=synthetic_topics
+                )
+            elif dataset_path:
+                conversation_data = self.load_conversation_dataset(dataset_path)
             else:
-                query = "How many hearts does an octopus have?"
+                # Create a small synthetic dataset
+                conversation_data = self.create_synthetic_dataset(size=20, topic_clusters=3)
+        
+        # Run main benchmark
+        metrics = self.run_benchmark(conversation_data)
+        
+        # Create test queries for retrieval evaluation
+        if len(conversation_data) > 10:
+            # Use some of the input as test queries
+            test_queries = [turn["user"] for turn in random.sample(conversation_data, 5)]
+            # Use hot memory as reference context
+            reference_context = self.system.get_hot_memory_contents()
             
-            # Process query
-            response = self.system.process_input(query)
-            
-            # Check if the fact was retrieved correctly
-            fact_retrieved = any(part in response for part in fact.split(". "))
-            
-            # Get current memory stats
-            stats = self.system.get_memory_stats()
-            
-            retrieval_results.append({
-                "target_fact": fact,
-                "query": query,
-                "fact_retrieved": fact_retrieved,
-                "hot_segments": stats["hot_memory"]["segment_count"],
-                "warm_segments": stats["warm_memory"]["segment_count"],
-                "cold_segments": stats["cold_memory"]["segment_count"]
-            })
+            # Evaluate memory retrieval
+            retrieval_results = self.evaluate_memory_retrieval(test_queries, reference_context)
+            metrics["retrieval_evaluation"] = retrieval_results
+        
+        # Evaluate compression quality
+        compression_results = self.evaluate_compression_quality()
+        metrics["compression_evaluation"] = compression_results
         
         # Save results
-        self.results["retrieval_accuracy"] = retrieval_results
-        pd.DataFrame(retrieval_results).to_csv(
-            os.path.join(self.output_dir, "retrieval_accuracy.csv"), 
-            index=False
-        )
+        results_dir = self.save_results()
         
-        logger.info("Retrieval accuracy test completed.")
+        logger.info(f"Full benchmark completed. Results saved to {results_dir}")
+        return metrics
+
+def main():
+    """Main function to run the benchmark."""
+    parser = argparse.ArgumentParser(description="Run memory system benchmark")
+    parser.add_argument("--model", default="gpt-4o-mini", help="LLM model to use")
+    parser.add_argument("--hot-size", type=int, default=4000, help="Hot memory size in tokens")
+    parser.add_argument("--warm-size", type=int, default=16000, help="Warm memory size in tokens")
+    parser.add_argument("--cold-size", type=int, default=64000, help="Cold memory size in tokens")
+    parser.add_argument("--dataset", help="Path to conversation dataset JSON file")
+    parser.add_argument("--synthetic", action="store_true", help="Use synthetic dataset")
+    parser.add_argument("--synthetic-size", type=int, default=100, help="Size of synthetic dataset")
+    parser.add_argument("--synthetic-topics", type=int, default=5, help="Number of topics in synthetic dataset")
+    parser.add_argument("--output-dir", default="benchmark_results", help="Directory to save results")
+    parser.add_argument("--api-key", help="API key for LLM service")
     
-    def test_decompression_fidelity(self) -> None:
-        """Test how well decompression preserves original meaning."""
-        logger.info("Starting decompression fidelity test...")
-        
-        # Define test content
-        test_content = [
-            "The transformer architecture relies on self-attention mechanisms to capture dependencies between input tokens. Instead of processing data sequentially, transformers can consider all tokens simultaneously, making them highly parallelizable and effective for processing sequential data like text.",
-            "Python's Global Interpreter Lock (GIL) prevents multiple threads from executing Python bytecodes at once. This means that in CPython, threads cannot execute Python code in parallel, though I/O operations can run concurrently. The GIL simplifies memory management but can limit CPU-bound multithreaded performance.",
-            "A recurrent neural network (RNN) processes sequences by maintaining a hidden state that's updated at each time step. This allows the network to have 'memory' of previous inputs, making RNNs suitable for tasks like language modeling, speech recognition, and time series prediction."
-        ]
-        
-        results = []
-        
-        for content in test_content:
-            # Create original segment
-            original = MemorySegment(
-                content=content,
-                id=f"test_decompress_{len(content)%100}",
-                creation_time=time.time(),
-                importance=0.5
-            )
-            
-            # Step 1: Light compression
-            lightly_compressed = self.system.compressor.compress(original, level=1)
-            
-            # Step 2: Heavy compression
-            heavily_compressed = self.system.compressor.compress(original, level=2)
-            
-            # Step 3: Decompress both
-            lightly_decompressed = self.system.retrieval_engine.decompress_segment(lightly_compressed)
-            heavily_decompressed = self.system.retrieval_engine.decompress_segment(heavily_compressed)
-            
-            # Step 4: Extract entities from all versions
-            original_entities = self.system.entity_extractor.extract_entities(original.content)
-            light_entities = self.system.entity_extractor.extract_entities(lightly_decompressed.content)
-            heavy_entities = self.system.entity_extractor.extract_entities(heavily_decompressed.content)
-            
-            # Calculate overlap metrics
-            light_entity_preservation = len(set(light_entities).intersection(set(original_entities))) / len(original_entities) if original_entities else 1.0
-            heavy_entity_preservation = len(set(heavy_entities).intersection(set(original_entities))) / len(original_entities) if original_entities else 1.0
-            
-            # Get semantic similarity
-            light_semantic_overlap = self.system.relevance_evaluator._calculate_semantic_similarity(
-                lightly_decompressed, original.content
-            )
-            heavy_semantic_overlap = self.system.relevance_evaluator._calculate_semantic_similarity(
-                heavily_decompressed, original.content
-            )
-            
-            results.append({
-                "original_length": original.get_size(),
-                "light_compressed_length": lightly_compressed.get_size(),
-                "heavy_compressed_length": heavily_compressed.get_size(),
-                "light_decompressed_length": lightly_decompressed.get_size(),
-                "heavy_decompressed_length": heavily_decompressed.get_size(),
-                "light_compression_ratio": original.get_size() / lightly_compressed.get_size() if lightly_compressed.get_size() > 0 else float('inf'),
-                "heavy_compression_ratio": original.get_size() / heavily_compressed.get_size() if heavily_compressed.get_size() > 0 else float('inf'),
-                "original_entities": len(original_entities),
-                "light_entity_preservation": light_entity_preservation,
-                "heavy_entity_preservation": heavy_entity_preservation,
-                "light_semantic_overlap": light_semantic_overlap,
-                "heavy_semantic_overlap": heavy_semantic_overlap
-            })
-        
-        # Save results
-        self.results["decompression_fidelity"] = results
-        pd.DataFrame(results).to_csv(
-            os.path.join(self.output_dir, "decompression_fidelity.csv"), 
-            index=False
-        )
-        
-        logger.info("Decompression fidelity test completed.")
+    args = parser.parse_args()
     
-    def generate_visualizations(self) -> None:
-        """Generate visualizations from benchmark results."""
-        logger.info("Generating visualizations...")
-        
-        # Create plots directory
-        plots_dir = os.path.join(self.output_dir, "plots")
-        os.makedirs(plots_dir, exist_ok=True)
-        
-        # Set Seaborn style
-        sns.set(style="whitegrid")
-        plt.rcParams.update({'figure.figsize': (12, 8)})
-        
-        # 1. Memory utilization over time
-        if self.results["memory_utilization"]:
-            df = pd.DataFrame(self.results["memory_utilization"])
-            
-            plt.figure(figsize=(14, 8))
-            plt.subplot(2, 1, 1)
-            plt.plot(df['turn'], df['hot_size'], 'r-', label='Hot Memory')
-            plt.plot(df['turn'], df['warm_size'], 'b-', label='Warm Memory')
-            plt.plot(df['turn'], df['cold_size'], 'g-', label='Cold Memory')
-            plt.axhline(y=self.hot_size, color='r', linestyle='--', label='Hot Capacity')
-            plt.axhline(y=self.warm_size, color='b', linestyle='--', label='Warm Capacity')
-            plt.axhline(y=self.cold_size, color='g', linestyle='--', label='Cold Capacity')
-            plt.title('Memory Utilization Over Time')
-            plt.xlabel('Conversation Turn')
-            plt.ylabel('Memory Size (tokens)')
-            plt.legend()
-            
-            plt.subplot(2, 1, 2)
-            plt.plot(df['turn'], df['hot_segments'], 'r-', label='Hot Segments')
-            plt.plot(df['turn'], df['warm_segments'], 'b-', label='Warm Segments')
-            plt.plot(df['turn'], df['cold_segments'], 'g-', label='Cold Segments')
-            plt.title('Memory Segment Count Over Time')
-            plt.xlabel('Conversation Turn')
-            plt.ylabel('Number of Segments')
-            plt.legend()
-            
-            plt.tight_layout()
-            plt.savefig(os.path.join(plots_dir, 'memory_utilization.png'), dpi=300)
-            plt.close()
-        
-        # 2. Compression ratios by content type
-        if self.results["compression_ratios"]:
-            df = pd.DataFrame(self.results["compression_ratios"])
-            
-            plt.figure(figsize=(12, 10))
-            
-            plt.subplot(2, 1, 1)
-            sns.barplot(x='content_type', y='l1_ratio', data=df, color='skyblue', label='Level 1')
-            sns.barplot(x='content_type', y='l2_ratio', data=df, color='navy', label='Level 2')
-            plt.title('Compression Ratios by Content Type')
-            plt.xlabel('Content Type')
-            plt.ylabel('Compression Ratio')
-            plt.legend()
-            
-            plt.subplot(2, 1, 2)
-            sns.barplot(x='content_type', y='l1_entity_preservation', data=df, color='lightgreen', label='Level 1')
-            sns.barplot(x='content_type', y='l2_entity_preservation', data=df, color='darkgreen', label='Level 2')
-            plt.title('Entity Preservation by Content Type')
-            plt.xlabel('Content Type')
-            plt.ylabel('Entity Preservation Ratio')
-            plt.legend()
-            
-            plt.tight_layout()
-            plt.savefig(os.path.join(plots_dir, 'compression_ratios.png'), dpi=300)
-            plt.close()
-        
-        # 3. Response times histogram
-        if self.results["response_times"]:
-            plt.figure(figsize=(10, 6))
-            plt.hist(self.results["response_times"], bins=20, color='purple', alpha=0.7)
-            plt.axvline(x=np.mean(self.results["response_times"]), color='r', linestyle='--', 
-                      label=f'Mean: {np.mean(self.results["response_times"]):.2f}s')
-            plt.axvline(x=np.median(self.results["response_times"]), color='b', linestyle='--', 
-                      label=f'Median: {np.median(self.results["response_times"]):.2f}s')
-            plt.title('Response Time Distribution')
-            plt.xlabel('Response Time (seconds)')
-            plt.ylabel('Frequency')
-            plt.legend()
-            plt.savefig(os.path.join(plots_dir, 'response_times.png'), dpi=300)
-            plt.close()
-        
-        # 4. Relevance scores by segment type
-        if "relevance_evaluation" in self.results:
-            df = pd.DataFrame(self.results["relevance_evaluation"])
-            
-            plt.figure(figsize=(12, 8))
-            
-            # Reshape data for plotting
-            scores_df = df.melt(id_vars=["segment_id", "content_sample"], 
-                                value_vars=["base_relevance", "query1_relevance", 
-                                            "query2_relevance", "query3_relevance"],
-                                var_name="Query Type", value_name="Relevance Score")
-            
+    # Create benchmark
+    benchmark = CompressionBenchmark(
+        model_name=args.model,
+        hot_size=args.hot_size,
+        warm_size=args.warm_size,
+        cold_size=args.cold_size,
+        output_dir=args.output_dir,
+        api_key=args.api_key
+    )
+    
+    # Run benchmark
+    benchmark.run_full_benchmark(
+        dataset_path=args.dataset,
+        synthetic=args.synthetic,
+        synthetic_size=args.synthetic_size,
+        synthetic_topics=args.synthetic_topics
+    )
+
+if __name__ == "__main__":
+    main()

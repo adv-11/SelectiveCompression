@@ -3,6 +3,8 @@ import os
 import logging
 from typing import List, Dict, Any, Optional
 import time
+from dotenv import load_dotenv
+load_dotenv()  # Load environment variables from .env file
 
 class LLMInterface:
     def __init__(self, model_name, api_key=None):
