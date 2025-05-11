@@ -1,0 +1,38 @@
+graph TD
+    A[Input Query/Context] --> B[Cross-Tier Index]
+    
+    subgraph "Hierarchical Indexing"
+        B --> C[Entity Index]
+        B --> D[Semantic Vector Index]
+        B --> E[Temporal Index]
+        
+        C --> F[Entity-Context Mapping]
+        D --> G[ANN Vector Search]
+        E --> H[Temporal Context Lookup]
+    end
+    
+    F --> I[Hot Memory Pointers]
+    F --> J[Warm Memory Pointers]
+    F --> K[Cold Memory Pointers]
+    
+    G --> I
+    G --> J
+    G --> K
+    
+    H --> I
+    H --> J
+    H --> K
+    
+    I --> L[Retrieval & Integration]
+    J --> L
+    K --> L
+    
+    L --> M[Integrated Context for LLM]
+    
+    classDef index fill:#c77dff,stroke:#333,stroke-width:1px
+    classDef pointer fill:#a8dadc,stroke:#333,stroke-width:1px
+    classDef process fill:#d9d9d9,stroke:#333,stroke-width:1px
+    
+    class B,C,D,E,F,G,H index
+    class I,J,K pointer
+    class A,L,M process
