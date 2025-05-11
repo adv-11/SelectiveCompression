@@ -1,0 +1,33 @@
+flowchart TD
+    subgraph "Information Flow"
+        A[New Context Information] --> B[Hot Memory]
+        
+        B -- "Low importance/Low recency" --> C[Warm Memory]
+        C -- "Re-accessed/Increased importance" --> B
+        
+        C -- "Low frequency/Aged content" --> D[Cold Memory]
+        D -- "Matched by query/Entity referenced" --> C
+        D -- "Critical match/Direct reference" --> B
+    end
+    
+    subgraph "Decision Factors"
+        E[Recency Score]
+        F[Access Frequency]
+        G[Semantic Importance]
+        H[Query Relevance]
+    end
+    
+    E -.-> B
+    F -.-> B
+    G -.-> B
+    H -.-> B
+    
+    classDef hot fill:#ff6b6b,stroke:#333
+    classDef warm fill:#f9c74f,stroke:#333
+    classDef cold fill:#4ea8de,stroke:#333
+    classDef factors fill:#90be6d,stroke:#333
+    
+    class B hot
+    class C warm
+    class D cold
+    class E,F,G,H factors
