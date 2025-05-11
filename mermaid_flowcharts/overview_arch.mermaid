@@ -1,0 +1,38 @@
+flowchart TB
+    A[Input Context] --> B[Memory Allocation]
+    
+    subgraph "Storage"
+        C[Hot Memory<br>No Compression]
+        D[Warm Memory<br>Moderate Compression]
+        E[Cold Memory<br>Semantic Compression]
+    end
+    
+    B --> C
+    B --> D
+    B --> E
+    
+    C & D & E --> F[Indexing & Retrieval]
+    
+    G[User Query] --> F
+    
+    F --> H[Context Integration]
+    H --> I[LLM Processing]
+    I --> J[Response]
+    
+    K[Feedback] -.-> L[Adaptive Control]
+    L -.-> B
+    L -.-> F
+    
+    classDef hot fill:#ff6b6b,stroke:#333
+    classDef warm fill:#f9c74f,stroke:#333
+    classDef cold fill:#4ea8de,stroke:#333
+    classDef index fill:#c77dff,stroke:#333
+    classDef process fill:#d9d9d9,stroke:#333
+    classDef control fill:#90be6d,stroke:#333
+    
+    class C hot
+    class D warm
+    class E cold
+    class F index
+    class A,B,H,I,J process
+    class K,L control
