@@ -539,5 +539,5 @@ selective_compression_system/
     
 #### 5.2 Data Flow
 
-![Data Flow](1diagrams/info-flow.svg)
+![Data Flow](1diagrams/info-flow.sv)
 
