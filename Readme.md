@@ -516,7 +516,7 @@ function GENERATE_STRUCTURED_EXPANSION_PROMPT(compressed_content, metadata):
 ### 5. Implementation Architecture in Python
 
 #### 5.1 Class Structure
-
+```
 selective_compression_system/
 ├── __init__.py
 ├── core/
@@ -535,9 +535,8 @@ selective_compression_system/
     ├── llm_interface.py      # LLM integration
     └── integration.py        # Integration layer
 
-
+```
     
 #### 5.2 Data Flow
-
-![Data Flow](1diagrams/info-flow.sv)
+![Flow](1diagrams/info_flow.svg)
 
