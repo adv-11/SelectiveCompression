@@ -36,3 +36,45 @@ logging.basicConfig(
     ]
 )
 logger = logging.getLogger(__name__)
+
+
+@dataclass
+class BenchmarkMetrics:
+    """Data class to store benchmark metrics"""
+    # Memory Efficiency
+    compression_ratio: float = 0.0
+    storage_efficiency: float = 0.0
+    hot_memory_usage: float = 0.0
+    warm_memory_usage: float = 0.0
+    cold_memory_usage: float = 0.0
+    
+    # Information Preservation
+    entity_retention_rate: float = 0.0
+    fact_accuracy: float = 0.0
+    semantic_similarity: float = 0.0
+    bleu_score: float = 0.0
+    rouge_score: float = 0.0
+    
+    # Retrieval Performance
+    retrieval_accuracy: float = 0.0
+    retrieval_precision: float = 0.0
+    retrieval_recall: float = 0.0
+    context_completeness: float = 0.0
+    retrieval_latency: float = 0.0
+    
+    # Response Quality
+    answer_accuracy: float = 0.0
+    response_coherence: float = 0.0
+    hallucination_rate: float = 0.0
+    relevance_score: float = 0.0
+    
+    # System Performance
+    processing_latency: float = 0.0
+    api_calls_count: int = 0
+    throughput: float = 0.0
+    memory_usage_mb: float = 0.0
+    
+    # Temporal Performance
+    memory_decay_rate: float = 0.0
+    access_pattern_consistency: float = 0.0
+    long_term_retention: float = 0.0
