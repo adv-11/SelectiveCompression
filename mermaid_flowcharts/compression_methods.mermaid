@@ -1,0 +1,39 @@
+graph TD
+    A[Input Context Stream] --> B{Compression Selector}
+    B --> C[Hot Memory Compression]
+    B --> D[Warm Memory Compression]
+    B --> E[Cold Memory Compression]
+    
+    C --> C1[Huffman Coding]
+    C --> C2[Lempel-Ziv]
+    C --> C3[Run-Length Encoding]
+    
+    D --> D1[Attention-Guided Quantization]
+    D --> D2[K-means Clustering]
+    D --> D3[Importance-Based Pruning]
+    
+    E --> E1[Abstractive Summarization]
+    E --> E2[Entity-Relationship Extraction]
+    E --> E3[Key Phrase Extraction]
+    E --> E4[Semantic Vector Compression]
+    
+    C1 --> F[Compressed Context Storage]
+    C2 --> F
+    C3 --> F
+    D1 --> F
+    D2 --> F
+    D3 --> F
+    E1 --> F
+    E2 --> F
+    E3 --> F
+    E4 --> F
+    
+    classDef hot fill:#ff6b6b,stroke:#333,stroke-width:1px
+    classDef warm fill:#f9c74f,stroke:#333,stroke-width:1px
+    classDef cold fill:#4ea8de,stroke:#333,stroke-width:1px
+    classDef process fill:#d9d9d9,stroke:#333,stroke-width:1px
+    
+    class C,C1,C2,C3 hot
+    class D,D1,D2,D3 warm
+    class E,E1,E2,E3,E4 cold
+    class A,B,F process

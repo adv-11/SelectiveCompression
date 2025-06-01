@@ -1,0 +1,51 @@
+flowchart TB
+    A[Input Context Stream] --> B[Memory Tier Allocation]
+    
+    B --> C[Hot Memory]
+    B --> D[Warm Memory]
+    B --> E[Cold Memory]
+    
+    C --> F[Minimal/No Compression]
+    D --> G[Moderate Compression]
+    E --> H[Semantic Compression]
+    
+    F --> I[Cross-Tier Indexing]
+    G --> I
+    H --> I
+    
+    I --> J[Adaptive Retrieval System]
+    
+    K[User Query] --> J
+    
+    J --> L[Hot Memory Retrieval]
+    J --> M[Warm Memory Decompression]
+    J --> N[Cold Memory Reconstruction]
+    
+    L --> O[Context Integration]
+    M --> O
+    N --> O
+    
+    O --> P[LLM Processing]
+    
+    P --> Q[Generated Response]
+    
+    R[Performance Feedback] --> S[Adaptive Control System]
+    S --> B
+    S --> F
+    S --> G
+    S --> H
+    S --> J
+    
+    classDef hot fill:#ff6b6b,stroke:#333,stroke-width:1px
+    classDef warm fill:#f9c74f,stroke:#333,stroke-width:1px
+    classDef cold fill:#4ea8de,stroke:#333,stroke-width:1px
+    classDef index fill:#c77dff,stroke:#333,stroke-width:1px
+    classDef process fill:#d9d9d9,stroke:#333,stroke-width:1px
+    classDef control fill:#90be6d,stroke:#333,stroke-width:1px
+    
+    class C,F,L hot
+    class D,G,M warm
+    class E,H,N cold
+    class I,J index
+    class A,B,O,P,Q process
+    class R,S control
