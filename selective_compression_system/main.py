@@ -690,13 +690,38 @@ class MemoryCompressionBenchmark:
                 quality_scores.append(quality)
             
             # Average the scores
+            # Average the scores with validation
             if quality_scores:
-                metrics.answer_accuracy = statistics.mean([q['accuracy'] for q in quality_scores])
-                metrics.response_coherence = statistics.mean([q['coherence'] for q in quality_scores])
-                metrics.relevance_score = statistics.mean([q['relevance'] for q in quality_scores])
-                
-                # Estimate hallucination rate (inverse of accuracy)
-                metrics.hallucination_rate = 1.0 - metrics.answer_accuracy
+                try:
+                    # Ensure all values are numeric before calculating statistics
+                    accuracy_values = []
+                    coherence_values = []
+                    relevance_values = []
+                    
+                    for q in quality_scores:
+                        # Validate and convert each metric
+                        acc = float(q.get('accuracy', 0.5)) if q.get('accuracy') is not None else 0.5
+                        coh = float(q.get('coherence', 0.5)) if q.get('coherence') is not None else 0.5
+                        rel = float(q.get('relevance', 0.5)) if q.get('relevance') is not None else 0.5
+                        
+                        accuracy_values.append(acc)
+                        coherence_values.append(coh)
+                        relevance_values.append(rel)
+                    
+                    metrics.answer_accuracy = statistics.mean(accuracy_values) if accuracy_values else 0.5
+                    metrics.response_coherence = statistics.mean(coherence_values) if coherence_values else 0.5
+                    metrics.relevance_score = statistics.mean(relevance_values) if relevance_values else 0.5
+                    
+                    # Estimate hallucination rate (inverse of accuracy)
+                    metrics.hallucination_rate = 1.0 - metrics.answer_accuracy
+                    
+                except Exception as e:
+                    logger.error(f"Error calculating response quality metrics: {str(e)}")
+                    # Provide safe defaults
+                    metrics.answer_accuracy = 0.5
+                    metrics.response_coherence = 0.5
+                    metrics.relevance_score = 0.5
+                    metrics.hallucination_rate = 0.5
                 
         except Exception as e:
             logger.error(f"Error calculating response quality metrics: {str(e)}")
