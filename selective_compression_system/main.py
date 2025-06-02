@@ -510,7 +510,7 @@ class MemoryCompressionBenchmark:
             (10, 'factual', 'medium_factual'),
             (15, 'factual', 'long_factual'),
             (5, 'procedural', 'short_procedural'),
-            (20, 'procedural', 'medium_procedural'),
+            (15, 'procedural', 'medium_procedural'),
             (5, 'personal', 'short_personal'),
             (15, 'personal', 'medium_personal'),
             (5, 'abstract', 'short_abstract'),
