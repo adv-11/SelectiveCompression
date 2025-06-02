@@ -20,7 +20,7 @@ from dataclasses import dataclass, asdict
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import numpy as np
 from collections import defaultdict, Counter
-
+import re
 # Import the memory compression system
 sys.path.append('selective_compression_system')
 from core.system import SelectiveCompressionSystem
