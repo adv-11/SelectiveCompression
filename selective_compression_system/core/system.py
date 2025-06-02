@@ -92,7 +92,7 @@ class SelectiveCompressionSystem:
                     'size': self.memory_manager.hot_memory.get_size(),
                     'capacity': self.memory_manager.hot_memory.max_size,
                     'segment_count': len(self.memory_manager.hot_memory.segments),
-                    'utilization': f"{(self.memory_manager.hot_memory.get_size() / self.memory_manager.hot_memory.max_size) * 100:.1f}%"
+                    'utilization': (self.memory_manager.hot_memory.get_size() / self.memory_manager.hot_memory.max_size) * 100
                 },
                 'warm_memory': {
                     'size': self.memory_manager.warm_memory.get_size(),

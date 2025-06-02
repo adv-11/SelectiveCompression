@@ -807,7 +807,19 @@ class MemoryCompressionBenchmark:
         all_metrics = []
         for result in self.results:
             if 'metrics' in result:
-                all_metrics.append(result['metrics'])
+                cleaned_metrics = {}
+                for key, value in result['metrics'].items():
+                    try:
+                        # Ensure all metric values are numeric
+                        if isinstance(value, str):
+                            cleaned_metrics[key] = float(value) if value.replace('.', '').replace('-', '').isdigit() else 0.0
+                        elif value is None:
+                            cleaned_metrics[key] = 0.0
+                        else:
+                            cleaned_metrics[key] = float(value)
+                    except (ValueError, TypeError):
+                        cleaned_metrics[key] = 0.0
+                all_metrics.append(cleaned_metrics)
         
         if not all_metrics:
             return {'error': 'No metrics to analyze'}
