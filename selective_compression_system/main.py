@@ -509,6 +509,52 @@ class MemoryCompressionBenchmark:
         self.detailed_results = defaultdict(list)
         
         logger.info("Benchmark system initialized")
+
+    def _validate_and_clean_metrics(self, metrics: BenchmarkMetrics) -> BenchmarkMetrics:
+        """Ensure all metrics are proper numeric types"""
+        import dataclasses
+        
+        for field in dataclasses.fields(metrics):
+            value = getattr(metrics, field.name)
+            
+            try:
+                if field.type == float:
+                    # Convert to float and handle edge cases
+                    if isinstance(value, str):
+                        # Remove any percentage signs or other characters
+                        clean_value = value.replace('%', '').strip()
+                        numeric_value = float(clean_value)
+                    elif value is None:
+                        numeric_value = 0.0
+                    else:
+                        numeric_value = float(value)
+                    
+                    # Handle NaN and infinity
+                    if np.isnan(numeric_value) or np.isinf(numeric_value):
+                        numeric_value = 0.0
+                        
+                    setattr(metrics, field.name, numeric_value)
+                    
+                elif field.type == int:
+                    # Convert to int
+                    if isinstance(value, str):
+                        numeric_value = int(float(value.replace('%', '').strip()))
+                    elif value is None:
+                        numeric_value = 0
+                    else:
+                        numeric_value = int(value)
+                        
+                    setattr(metrics, field.name, numeric_value)
+                    
+            except (ValueError, TypeError) as e:
+                logger.warning(f"Failed to convert metric {field.name} with value {value}: {str(e)}")
+                # Set safe default based on type
+                if field.type == float:
+                    setattr(metrics, field.name, 0.0)
+                elif field.type == int:
+                    setattr(metrics, field.name, 0)
+        
+        return metrics
     
     def run_comprehensive_benchmark(self) -> Dict[str, Any]:
         """Run the complete benchmark suite"""
@@ -629,6 +675,8 @@ class MemoryCompressionBenchmark:
         # Retrieval performance metrics
         self._calculate_retrieval_metrics(metrics, conversation)
         
+        metrics = self._validate_and_clean_metrics(metrics)
+
         return {
             'scenario_name': scenario_name,
             'metrics': asdict(metrics),
@@ -1183,6 +1231,8 @@ class MemoryCompressionBenchmark:
         report.append("=" * 80)
         
         return "\n".join(report)
+    
+    
 
 def main():
     """Main function to run the benchmark"""
