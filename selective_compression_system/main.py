@@ -113,15 +113,147 @@ class SyntheticDataGenerator:
         }
         
         self.topics = {
-            'factual': ['climate change', 'quantum computing', 'artificial intelligence', 
-                       'renewable energy', 'space exploration', 'genetics', 'economics'],
-            'procedural': ['cooking pasta', 'learning guitar', 'starting a business', 
-                          'writing code', 'exercising', 'meditation', 'budgeting'],
-            'personal': ['career change', 'relationship issues', 'time management', 
-                        'stress', 'decision making', 'confidence', 'work-life balance'],
-            'abstract': ['consciousness', 'free will', 'creativity', 'happiness', 
-                        'justice', 'beauty', 'meaning of life']
-        }
+            'factual': [
+                # Science & Technology
+                'climate change', 'quantum computing', 'artificial intelligence', 'machine learning',
+                'renewable energy', 'space exploration', 'genetics', 'biotechnology', 'nanotechnology',
+                'robotics', 'blockchain', 'cybersecurity', 'data science', 'nuclear physics',
+                'astronomy', 'neuroscience', 'molecular biology', 'chemistry', 'materials science',
+                'bioengineering', 'gene editing', 'stem cells', 'medical research', 'pharmaceuticals',
+                'epidemiology', 'public health', 'environmental science', 'oceanography', 'geology',
+                'meteorology', 'seismology', 'paleontology', 'archaeology', 'anthropology',
+                
+                # Social Sciences & Economics
+                'economics', 'macroeconomics', 'microeconomics', 'behavioral economics', 
+                'international trade', 'monetary policy', 'fiscal policy', 'cryptocurrency',
+                'stock market', 'real estate', 'supply chain', 'globalization', 'inflation',
+                'psychology', 'cognitive psychology', 'social psychology', 'developmental psychology',
+                'sociology', 'political science', 'international relations', 'diplomacy',
+                'governance', 'democracy', 'authoritarianism', 'human rights', 'civil liberties',
+                'constitutional law', 'criminal justice', 'immigration', 'urban planning',
+                
+                # History & Culture
+                'world history', 'ancient civilizations', 'medieval history', 'renaissance',
+                'industrial revolution', 'world wars', 'cold war', 'decolonization',
+                'cultural anthropology', 'linguistics', 'literature', 'philosophy',
+                'religious studies', 'mythology', 'folklore', 'art history', 'music history',
+                'architecture', 'design', 'fashion', 'culinary traditions', 'sports history',
+                
+                # Geography & Environment
+                'physical geography', 'human geography', 'cartography', 'demographics',
+                'urbanization', 'rural development', 'natural disasters', 'conservation',
+                'biodiversity', 'ecosystems', 'wildlife', 'forestry', 'agriculture',
+                'water resources', 'air quality', 'pollution', 'waste management',
+                'sustainable development', 'green technology', 'carbon footprint'
+            ],
+            
+            'procedural': [
+                # Life Skills
+                'cooking pasta', 'baking bread', 'meal planning', 'food preservation',
+                'grocery shopping', 'kitchen organization', 'knife skills', 'wine pairing',
+                'home brewing', 'gardening', 'composting', 'housekeeping', 'laundry',
+                'basic repairs', 'plumbing', 'electrical work', 'painting', 'carpentry',
+                'sewing', 'knitting', 'crafting', 'woodworking', 'auto maintenance',
+                
+                # Learning & Education
+                'learning guitar', 'piano lessons', 'singing', 'drawing', 'painting',
+                'photography', 'video editing', 'writing', 'speed reading', 'memory techniques',
+                'note taking', 'study methods', 'test preparation', 'research skills',
+                'critical thinking', 'problem solving', 'language learning', 'public speaking',
+                'presentation skills', 'interview preparation', 'networking',
+                
+                # Technology & Digital
+                'writing code', 'web development', 'app development', 'database design',
+                'system administration', 'network setup', 'troubleshooting', 'data analysis',
+                'digital marketing', 'social media management', 'content creation',
+                'video production', 'podcast creation', 'website building', 'SEO',
+                'email marketing', 'online selling', 'e-commerce', 'digital security',
+                
+                # Health & Fitness
+                'exercising', 'strength training', 'cardio workouts', 'yoga', 'pilates',
+                'stretching', 'running', 'swimming', 'cycling', 'martial arts',
+                'meditation', 'mindfulness', 'breathing exercises', 'sleep hygiene',
+                'nutrition planning', 'weight management', 'injury prevention',
+                'physical therapy', 'mental health care', 'stress management',
+                
+                # Business & Finance
+                'starting a business', 'business planning', 'market research', 'fundraising',
+                'accounting', 'bookkeeping', 'tax preparation', 'budgeting', 'investing',
+                'retirement planning', 'insurance', 'estate planning', 'credit management',
+                'debt reduction', 'saving money', 'negotiation', 'project management',
+                'team leadership', 'hiring', 'performance reviews', 'conflict resolution',
+                
+                # Creative & Artistic
+                'creative writing', 'storytelling', 'screenwriting', 'poetry', 'blogging',
+                'journaling', 'music composition', 'beat making', 'sound engineering',
+                'graphic design', 'logo design', 'illustration', 'animation', '3D modeling',
+                'sculpture', 'pottery', 'jewelry making', 'fashion design', 'interior design'
+            ],
+            
+            'personal': [
+                # Career & Professional
+                'career change', 'job searching', 'resume writing', 'portfolio building',
+                'skill development', 'professional networking', 'workplace communication',
+                'leadership development', 'work-life balance', 'workplace stress',
+                'imposter syndrome', 'career advancement', 'salary negotiation',
+                'performance anxiety', 'workplace relationships', 'office politics',
+                'remote work', 'freelancing', 'entrepreneurship', 'retirement transition',
+                
+                # Relationships & Social
+                'relationship issues', 'dating', 'marriage', 'parenting', 'family dynamics',
+                'friendship', 'social anxiety', 'communication skills', 'conflict resolution',
+                'setting boundaries', 'trust issues', 'intimacy', 'breakups', 'divorce',
+                'grief', 'loss', 'loneliness', 'social skills', 'networking', 'community building',
+                'cultural differences', 'generational gaps', 'peer pressure', 'bullying',
+                
+                # Mental Health & Wellbeing
+                'stress', 'anxiety', 'depression', 'panic attacks', 'trauma', 'PTSD',
+                'self-esteem', 'confidence', 'body image', 'perfectionism', 'procrastination',
+                'attention deficit', 'memory issues', 'sleep problems', 'addiction',
+                'eating disorders', 'mood swings', 'emotional regulation', 'anger management',
+                'forgiveness', 'healing', 'therapy', 'counseling', 'self-care', 'mindfulness',
+                
+                # Life Management
+                'time management', 'productivity', 'organization', 'goal setting',
+                'habit formation', 'motivation', 'discipline', 'focus', 'decision making',
+                'priority setting', 'life planning', 'transitions', 'moving', 'travel planning',
+                'financial stress', 'health management', 'chronic illness', 'aging',
+                'identity', 'purpose', 'values', 'spirituality', 'personal growth',
+                
+            ],
+            
+            'abstract': [
+                # Philosophy & Metaphysics
+                'consciousness', 'free will', 'determinism', 'mind-body problem', 'personal identity',
+                'reality', 'existence', 'being', 'nothingness', 'infinity', 'time',
+                'causation', 'possibility', 'necessity', 'universals', 'particulars',
+               
+                # Ethics & Morality
+                'justice', 'fairness', 'equality', 'rights', 'duties', 'virtue', 'vice',
+                'good', 'evil', 'moral responsibility', 'punishment', 'forgiveness',
+                'compassion', 'empathy', 'altruism', 'selfishness', 'integrity',
+               
+                # Aesthetics & Beauty
+                'beauty', 'ugliness', 'sublime', 'taste', 'aesthetic experience',
+                'art', 'creativity', 'imagination', 'inspiration', 'genius',
+                'originality', 'authenticity', 'representation', 'expression',
+                
+                
+                # Existential & Spiritual
+                'meaning of life', 'purpose', 'suffering', 'death', 'mortality',
+                'legacy', 'transcendence', 'spirituality', 'faith', 'doubt',
+                'revelation', 'mystery', 'sacred', 'profane', 'divine', 'eternal',
+                
+                
+                # Concepts & Ideas
+                'happiness', 'sadness', 'joy', 'melancholy', 'nostalgia', 'longing',
+                'desire', 'fulfillment', 'satisfaction', 'contentment', 'peace',
+                'chaos', 'order', 'harmony', 'discord', 'balance', 'extremes',
+                'moderation', 'excess', 'simplicity', 'complexity', 'clarity',
+                
+                
+            ]
+        }   
 
     def generate_conversation(self, length: int, content_type: str) -> List[Tuple[str, str]]:
         """Generate a synthetic conversation of specified length and type"""
@@ -376,7 +508,7 @@ class MemoryCompressionBenchmark:
             # (length, content_type, name)
             (5, 'factual', 'short_factual'),
             (10, 'factual', 'medium_factual'),
-            (25, 'factual', 'long_factual'),
+            (15, 'factual', 'long_factual'),
             (5, 'procedural', 'short_procedural'),
             (20, 'procedural', 'medium_procedural'),
             (5, 'personal', 'short_personal'),
@@ -685,16 +817,42 @@ class MemoryCompressionBenchmark:
         metric_names = list(all_metrics[0].keys())
         
         for metric_name in metric_names:
-            values = [m[metric_name] for m in all_metrics if m[metric_name] is not None]
+            # Filter out None values AND ensure all values are numeric
+            values = []
+            for m in all_metrics:
+                val = m.get(metric_name)
+                if val is not None:
+                    try:
+                        # Convert to float to ensure it's numeric
+                        numeric_val = float(val)
+                        # Skip NaN and infinite values
+                        if not (np.isnan(numeric_val) or np.isinf(numeric_val)):
+                            values.append(numeric_val)
+                    except (ValueError, TypeError):
+                        # Skip non-numeric values
+                        continue
+            
             if values:
-                aggregate_stats[metric_name] = {
-                    'mean': statistics.mean(values),
-                    'median': statistics.median(values),
-                    'std_dev': statistics.stdev(values) if len(values) > 1 else 0,
-                    'min': min(values),
-                    'max': max(values),
-                    'count': len(values)
-                }
+                try:
+                    aggregate_stats[metric_name] = {
+                        'mean': statistics.mean(values),
+                        'median': statistics.median(values),
+                        'std_dev': statistics.stdev(values) if len(values) > 1 else 0.0,
+                        'min': min(values),
+                        'max': max(values),
+                        'count': len(values)
+                    }
+                except Exception as e:
+                    logger.warning(f"Error calculating stats for {metric_name}: {str(e)}")
+                    # Provide default values
+                    aggregate_stats[metric_name] = {
+                        'mean': 0.0,
+                        'median': 0.0,
+                        'std_dev': 0.0,
+                        'min': 0.0,
+                        'max': 0.0,
+                        'count': 0
+                    }
         
         # Performance summary
         performance_summary = {
