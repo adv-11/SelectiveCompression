@@ -1067,7 +1067,12 @@ class MemoryCompressionBenchmark:
                         for tier in ['hot_memory', 'warm_memory', 'cold_memory']:
                             if tier in mem_stats:
                                 util = mem_stats[tier].get('utilization', 0)
-                                report.append(f"    {tier.replace('_', ' ').title()}: {util:.1%}")
+                                # Handle both numeric and string percentage formats
+                                if isinstance(util, str):
+                                    util_clean = float(util.rstrip('%')) / 100.0
+                                else:
+                                    util_clean = util / 100.0 if util > 1 else util
+                                report.append(f"    {tier.replace('_', ' ').title()}: {util_clean:.1%}")
         
         # Recommendations Section
         report.append("\n" + "=" * 40)
