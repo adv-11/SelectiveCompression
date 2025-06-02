@@ -587,10 +587,11 @@ class MemoryCompressionBenchmark:
         
         # Memory efficiency metrics
         memory_stats = self.system.get_memory_stats()
-        metrics.hot_memory_usage = memory_stats['hot_memory']['utilization']
-        metrics.warm_memory_usage = memory_stats['warm_memory']['utilization']
-        metrics.cold_memory_usage = memory_stats['cold_memory']['utilization']
-        
+        # Convert utilization to decimal (0-1 range) for consistency
+        metrics.hot_memory_usage = memory_stats['hot_memory']['utilization'] / 100.0
+        metrics.warm_memory_usage = memory_stats['warm_memory']['utilization'] / 100.0
+        metrics.cold_memory_usage = memory_stats['cold_memory']['utilization'] / 100.0
+                
         # Calculate compression ratios
         compressed_segments = []
         compressed_segments.extend(self.system.memory_manager.warm_memory.get_all_segments())
