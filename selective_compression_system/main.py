@@ -457,9 +457,22 @@ class MetricsCalculator:
                 if ':' in line:
                     metric, score = line.split(':', 1)
                     try:
-                        ratings[metric.strip().lower()] = float(score.strip()) / 10.0
-                    except:
-                        continue
+                        # Clean the score string more thoroughly
+                        score_clean = score.strip()
+                        # Remove any non-numeric characters except decimal points and minus signs
+                        import re
+                        score_numeric = re.findall(r'-?\d+\.?\d*', score_clean)
+                        if score_numeric:
+                            numeric_value = float(score_numeric[0])
+                            # Ensure the value is within expected range (0-10)
+                            numeric_value = max(0, min(10, numeric_value))
+                            ratings[metric.strip().lower()] = numeric_value / 10.0
+                        else:
+                            # Default value if parsing fails
+                            ratings[metric.strip().lower()] = 0.5
+                    except Exception as e:
+                        logger.warning(f"Failed to parse rating for {metric}: {score} - {str(e)}")
+                        ratings[metric.strip().lower()] = 0.5
             
             return {
                 'accuracy': ratings.get('accuracy', 0.5),
