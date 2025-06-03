@@ -510,6 +510,17 @@ class MemoryCompressionBenchmark:
         
         logger.info("Benchmark system initialized")
 
+
+    @staticmethod
+    def _as_fraction(value):
+        """
+        Convert utilisation expressed as '75%', 75 or 0.75 into a float 0-1.
+        """
+        if isinstance(value, str):
+            value = float(value.strip().rstrip('%'))
+        # value > 1 → assume the caller meant a percentage, not a fraction
+        return value / 100.0 if value > 1 else value
+
     def _validate_and_clean_metrics(self, metrics: BenchmarkMetrics) -> BenchmarkMetrics:
         """Ensure all metrics are proper numeric types"""
         import dataclasses
