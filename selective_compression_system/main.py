@@ -658,9 +658,15 @@ class MemoryCompressionBenchmark:
         # Memory efficiency metrics
         memory_stats = self.system.get_memory_stats()
         # Convert utilization to decimal (0-1 range) for consistency
-        metrics.hot_memory_usage = memory_stats['hot_memory']['utilization'] / 100.0
-        metrics.warm_memory_usage = memory_stats['warm_memory']['utilization'] / 100.0
-        metrics.cold_memory_usage = memory_stats['cold_memory']['utilization'] / 100.0
+        
+        util = memory_stats['hot_memory']['utilization']
+        metrics.hot_memory_usage = self._as_fraction(util)
+
+        util = memory_stats['warm_memory']['utilization']
+        metrics.warm_memory_usage = self._as_fraction(util)
+
+        util = memory_stats['cold_memory']['utilization']
+        metrics.cold_memory_usage = self._as_fraction(util)
                 
         # Calculate compression ratios
         compressed_segments = []
