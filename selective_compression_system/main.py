@@ -580,9 +580,9 @@ class MemoryCompressionBenchmark:
             (10, 'factual', 'medium_factual'),
             (15, 'factual', 'long_factual'),
             (5, 'procedural', 'short_procedural'),
-            (15, 'procedural', 'medium_procedural'),
+            (10, 'procedural', 'medium_procedural'),
             (5, 'personal', 'short_personal'),
-            (15, 'personal', 'medium_personal'),
+            (10, 'personal', 'medium_personal'),
             (5, 'abstract', 'short_abstract'),
             (10, 'abstract', 'medium_abstract'),
         ]
@@ -658,7 +658,7 @@ class MemoryCompressionBenchmark:
         # Memory efficiency metrics
         memory_stats = self.system.get_memory_stats()
         # Convert utilization to decimal (0-1 range) for consistency
-        
+
         util = memory_stats['hot_memory']['utilization']
         metrics.hot_memory_usage = self._as_fraction(util)
 
