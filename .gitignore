@@ -2,3 +2,4 @@
 __pycache__
 .log
 benchmark.log
+benchmark_results
