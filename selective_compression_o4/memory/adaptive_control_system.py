@@ -1,3 +1,11 @@
+"""
+AdaptiveControlSystem (adaptive_control_system.py)
+
+Uses gpt4o-mini for live classification of any text into hot/warm/cold.
+
+Exposes .classify(text), .assign_tier(item), and a feedback‐driven .adjust_thresholds() method.
+"""
+
 import os
 import logging
 
