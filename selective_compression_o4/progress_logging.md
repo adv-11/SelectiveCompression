@@ -1,35 +1,56 @@
-Date: 18th June
+# Date: 18th June
 
-### AdaptiveControlSystem
+## ✅ Memory Subsystem: Final Check
 
-Classifies any text into hot/warm/cold using GPT4O-mini.
+quick summary confirming that all memory files integrate cleanly:
 
-Exposes methods for classification and threshold adjustment.
+### `adaptive_control_system.py`
 
-#### MemoryTierManager
+- **Purpose**: Classifies text into Hot/Warm/Cold via GPT4O-mini
+- **Public API**:
+  - `.classify(text) → “hot” | “warm” | “cold”
+  - `.assign_tier(item, tier)`
+  - `.adjust_thresholds(stats)`
 
-Storage:
+---
 
-Hot: raw text in SQLite table.
+### `memory_tier_manager.py`
 
-Warm: LLM-generated summary + its embedding + original text.
+#### Ingestion (add)
 
-Cold: LLM-generated embedding + original text, with FAISS index for semantic lookup.
+- **Hot**
+  - Raw SQLite insert
+- **Warm**
+  - Generate summary
+  - Compute embedding
+  - Store in SQLite
+  - Index in FAISS
+- **Cold**
+  - Compute embedding
+  - Store in SQLite
+  - Index in FAISS
 
-#### Retrieval:
+#### Retrieval
 
-get_hot(top_k): returns most recent hot entries.
+- `get_hot(top_k)`
+  - Returns the last _N_ items from Hot tier
+- `get_warm(query, top_k)`
+  - Semantic FAISS lookup on summaries
+- `get_cold(query, top_k)`
+  - Semantic FAISS lookup on full text
 
-get_warm(top_k): returns most recent warm summaries & contexts.
+#### Migration / Garbage Collection
 
-get_cold(query, top_k): semantic FAISS search over cold embeddings.
+- Moves entries between tiers over time based on usage
+- Prunes old entries from Cold tier
 
-#### ChatAgent
+#### Instrumentation
 
-On each incoming user message:
+- Measures latency of each operation
+- Calls `.adjust_thresholds()` to tune tier thresholds
 
-Calls MemoryTierManager.add() to store the turn.
+---
 
-(Future) will retrieve relevant context.
+### `chat_agent.py` (previous implementation)
 
-Forwards the user message to GPT4O-mini and emits the response.
+- Ingests each user turn into memory via `memory_tier_manager.add(...)`
