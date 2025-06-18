@@ -4,3 +4,4 @@ langgraph>=0.4.8
 openai>=1.88.0
 faiss-cpu>=1.11.0
 python-dotenv>=1.1.0
+numpy>=1.24.0
