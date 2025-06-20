@@ -343,3 +343,18 @@ class MemoryTierManager:
 
         self.conn.commit()
         logger.info("Completed garbage collection & tier migration")
+
+
+
+
+# ─── Singleton Accessor ────────────────────────────────────────────────────────
+_shared_manager: MemoryTierManager | None = None
+
+def get_memory_manager() -> MemoryTierManager:
+    """
+    Returns a single shared MemoryTierManager across all agents.
+    """
+    global _shared_manager
+    if _shared_manager is None:
+        _shared_manager = MemoryTierManager()
+    return _shared_manager
