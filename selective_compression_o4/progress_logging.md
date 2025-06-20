@@ -54,3 +54,13 @@ quick summary confirming that all memory files integrate cleanly:
 ### `chat_agent.py` (previous implementation)
 
 - Ingests each user turn into memory via `memory_tier_manager.add(...)`
+
+<br><br>
+
+# Date: 19th June
+
+| File                         | Imports/Deps                               | Usage                                                                | Status                                                        |
+| ---------------------------- | ------------------------------------------ | -------------------------------------------------------------------- | ------------------------------------------------------------- |
+| `adaptive_control_system.py` | `openai`                                   | Used by `MemoryTierManager` for classification & tuning              | ✅ Self-contained                                             |
+| `memory_tier_manager.py`     | `sqlite3`, `openai`, `faiss`, `numpy`, ACS | Instantiated in `OrchestratorAgent`; manages both ingest & retrieval | ✅ Tables, FAISS indices, and instrumentation wired correctly |
+| `orchestrator_agent.py`      | `langgraph`, `openai`, `MemoryTierManager` | Handles full message flow                                            | ✅ Retrieval calls match manager API                          |
