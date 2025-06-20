@@ -1,0 +1,43 @@
+flowchart TD
+  subgraph UI [Streamlit UI]
+    UIVis[Visualizes Memory Tiers & Agent Flow]
+  end
+
+  subgraph MemorySubsystem [Memory Subsystem]
+    ACS[AdaptiveControlSystem]
+    MTM[MemoryTierManager]
+    subgraph MTMModules [ ]
+      Ingest[Ingestion]
+      Retrieve[Retrieval (FAISS & SQLite)]
+      GC[GC & Migration]
+    end
+    DB[SQLite Database]
+    VS[FAISS Vector Store]
+    ACS --> MTM
+    MTM --> Ingest
+    MTM --> Retrieve
+    MTM --> GC
+    Ingest --> DB
+    Retrieve --> DB
+    Retrieve --> VS
+    GC --> DB
+    GC --> VS
+  end
+
+  subgraph Agents [LangGraph Agents]
+    IA[IngestAgent]
+    RA[RetrievalAgent]
+    OA[OrchestratorAgent]
+    CA[CleanupAgent]
+  end
+
+  UIVis --> IA
+  IA --> RA
+  RA --> OA
+  OA --> CA
+  IA --> MemorySubsystem
+  RA --> MemorySubsystem
+  OA --> MemorySubsystem
+  CA --> MemorySubsystem
+
+  MemorySubsystem --> UIVis
