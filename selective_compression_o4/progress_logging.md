@@ -64,3 +64,18 @@ quick summary confirming that all memory files integrate cleanly:
 | `adaptive_control_system.py` | `openai`                                   | Used by `MemoryTierManager` for classification & tuning              | ✅ Self-contained                                             |
 | `memory_tier_manager.py`     | `sqlite3`, `openai`, `faiss`, `numpy`, ACS | Instantiated in `OrchestratorAgent`; manages both ingest & retrieval | ✅ Tables, FAISS indices, and instrumentation wired correctly |
 | `orchestrator_agent.py`      | `langgraph`, `openai`, `MemoryTierManager` | Handles full message flow                                            | ✅ Retrieval calls match manager API                          |
+
+# Date: 20th June
+
+Splitting the Orchestrator agent into sub agents (yet to implement)
+
+- ingest
+- retrieval
+- orchestrator
+- cleanup
+
+The flow will look like:
+
+<br>
+
+Graph Starts -> User Message -> Ingest Agent (persist to memory) -> Retrieval Agent( see ingest and pull from all tiers) -> Orchestrator Agent (see retrieved , prompt, call LLM) -> Cleanup agent ( runs in bg)
